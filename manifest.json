@@ -12,12 +12,24 @@
         "persistent": false
       },
     "commands": {
-        "_execute_browser_action": {
-          "suggested_key": {
-            "default": "Ctrl+Shift+F",
-            "mac": "MacCtrl+Shift+F"
-          },
-          "description": "Opens hello.html"
-        }
+      "_execute_browser_action": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+F",
+          "mac": "MacCtrl+Shift+F"
+        },
+        "description": "Opens hello.html"
       }
+    },
+    "icons": { 
+      "48": "ic_launcher_round_48.png",
+      "72": "ic_launcher_round_72.png",
+      "96": "ic_launcher_round_96.png",
+      "144": "ic_launcher_round_144.png",
+      "192": "ic_launcher_round_192.png"
+    }
   }
+
+  
+
+
+
