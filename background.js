@@ -91,7 +91,9 @@ const moveTabsPromise = (tabs) => {
 
 const groupVivaldiTabsPromise = (tabs) => {
   const tabsToExtData = tabs.reduce( (old, curr) => {
-      const data = typeof curr.extData === 'string' ? JSON.parse(curr.extData) : {}
+      var data = {}
+      try { data = JSON.parse(curr.extData) } catch(e) {}
+
       return {
         ...old,
         [parseInt(curr.id)]: data
