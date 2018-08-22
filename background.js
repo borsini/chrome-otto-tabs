@@ -126,7 +126,8 @@ const removeDuplicates = (tab) => (
       return;
     }
 
-    chrome.tabs.query({url: tab.url, currentWindow: true}, function(tabs) {
+    chrome.tabs.query({}, function(allTabs) {
+      const tabs = allTabs.filter( t => t.url == tab.url)
       console.log(tabs.length, "identical tabs")
       if(tabs.length > 1) {
         const toRemove = tabs.filter(t => t.id != tab.id);
