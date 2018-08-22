@@ -11,7 +11,7 @@
 var config = {
   duplicates: true,
   group: true,
-  host: true
+  host: false
 }
 
 function uuidv4() {
@@ -149,7 +149,7 @@ const trimTabs = (tab) => (
       return;
     }
 
-    const maxAllowed = 2
+    const maxAllowed = 5
 
     const url = new URL(tab.url);
     var hostQuery = url.origin + "/*";
