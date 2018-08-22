@@ -1,9 +1,9 @@
 {
     "name": "Otto Tabs",
     "description" : "Smart tabs management",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "manifest_version": 2,
-    "permissions": ["storage", "tabs"],
+    "permissions": ["tabs"],
     "browser_action": {
       "default_popup": "index.html"
     },
@@ -11,15 +11,7 @@
         "scripts": ["background.js"],
         "persistent": false
       },
-    "commands": {
-      "_execute_browser_action": {
-        "suggested_key": {
-          "default": "Ctrl+Shift+F",
-          "mac": "MacCtrl+Shift+F"
-        },
-        "description": "Opens hello.html"
-      }
-    },
+    "commands": {    },
     "icons": { 
       "48": "ic_launcher_round_48.png",
       "72": "ic_launcher_round_72.png",
