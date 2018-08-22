@@ -78,7 +78,11 @@ const moveSameUrlHost = (tab) => (
     var hostQuery = url.origin + "/*";
 
     chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
-      groupVivaldiTabsPromise(tabs).then( () => resolve())
+      if(tab.extData) {
+        groupVivaldiTabsPromise(tabs).then( () => resolve())
+      } else {
+        moveTabsPromise(tabs).then( () => resolve())
+      }
     });
   })
 );
