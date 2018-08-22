@@ -32,20 +32,7 @@ chrome.runtime.onMessage.addListener(function(message, send, sendResponse) {
   } else {
     console.log('new config', message)
     config = message
-  }
-});
-
-
-chrome.commands.onCommand.addListener(function(command) {
-  if (command == "toggle-pin") {
-    // Get the currently selected tab
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      // Toggle the pinned status
-      var current = tabs[0]
-      chrome.tabs.update(current.id, {'pinned': !current.pinned});
-    });
-  }
-});
+  }});
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if(changeInfo.url) {  
