@@ -14,6 +14,12 @@ var config = {
   host: true
 }
 
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  )
+}
+
 const promiseSerial = promises =>
   promises.map(p => () => p)
     .reduce((promise, func) =>
@@ -49,10 +55,18 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 const movePromise = (id, index) => (
   new Promise(function(resolve, reject) {
-    console.log("moving tab to index : ", index)
+    console.log("moving tab to index : ", index);
     chrome.tabs.move(id, { index }, () => resolve());
   })
 );
+
+const updatePromise = (id, data) => (
+  new Promise(function(resolve, reject) {
+    console.log("updating tab", id, data);
+    chrome.tabs.update(parseInt(id), data, (t) => resolve());
+  })
+);
+
 
 const applyRulesForTab = (tab) => {
   console.log("apply rules for tab", tab);
@@ -75,12 +89,44 @@ const moveSameUrlHost = (tab) => (
     var hostQuery = url.origin + "/*";
 
     chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
-      const firstIndex = tabs[0].index;
-      const movePromises = tabs.map(((t, index) => movePromise(t.id, firstIndex + index)))
-      promiseSerial(movePromises).then( () => resolve())
+      groupVivaldiTabsPromise(tabs).then( () => resolve())
     });
   })
 );
+
+const moveTabsPromise = (tabs) => {
+  const firstIndex = tabs[0].index;
+  const movePromises = tabs.map(((t, index) => movePromise(t.id, firstIndex + index)))
+  return promiseSerial(movePromises)
+}
+
+const groupVivaldiTabsPromise = (tabs) => {
+  const tabsToExtData = tabs.reduce( (old, curr) => {
+      const data = typeof curr.extData === 'string' ? JSON.parse(curr.extData) : {}
+      return {
+        ...old,
+        [parseInt(curr.id)]: data
+      } 
+    }, {})
+
+  const existingGroupId = Object.values(tabsToExtData)
+  .map(d => d.group)
+  .find(g => g);
+  
+  var groupIdToUse = existingGroupId ? existingGroupId : uuidv4()
+
+  if(tabs.length === 1) {
+    groupIdToUse = null
+  }
+
+  const updatePromises = Object.keys(tabsToExtData).map((tabId => {
+    const newExtData = tabsToExtData[tabId]
+    newExtData.group = groupIdToUse
+
+    return updatePromise(tabId, { extData : JSON.stringify(newExtData) } );
+  }))
+  return promiseSerial(updatePromises)
+}
 
 const removeDuplicates = (tab) => (
   new Promise(function(resolve, reject) {
