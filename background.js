@@ -14,6 +14,12 @@ var config = {
   host: true
 }
 
+const promiseSerial = promises =>
+  promises.map(p => () => p)
+    .reduce((promise, func) =>
+      promise.then(result => func().then(Array.prototype.concat.bind(result))),
+      Promise.resolve([]))
+
 chrome.runtime.onMessage.addListener(function(message, send, sendResponse) {
   if(message == 'GET_CONFIG') {
     sendResponse(config)
@@ -41,6 +47,13 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+const movePromise = (id, index) => (
+  new Promise(function(resolve, reject) {
+    console.log("moving tab to index : ", index)
+    chrome.tabs.move(id, { index }, () => resolve());
+  })
+);
+
 const applyRulesForTab = (tab) => {
   console.log("apply rules for tab", tab);
 
@@ -63,14 +76,8 @@ const groupSameUrlHost = (tab) => (
 
     chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
       const firstIndex = tabs[0].index;
-      tabs.forEach((t, idx) => {
-        console.log("move tab ", idx)
-        chrome.tabs.move(
-          t.id,
-          { index: firstIndex + idx  }
-        );
-      });
-      resolve();
+      const movePromises = tabs.map(((t, index) => movePromise(t.id, firstIndex + index)))
+      promiseSerial(movePromises).then( () => resolve())
     });
   })
 );
