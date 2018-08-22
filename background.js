@@ -59,12 +59,12 @@ const applyRulesForTab = (tab) => {
 
   console.log(config)
 
-  groupSameUrlHost(tab)
+  moveSameUrlHost(tab)
     .then(removeDuplicates(tab))
     .then(trimTabs(tab));
 }
 
-const groupSameUrlHost = (tab) => (
+const moveSameUrlHost = (tab) => (
   new Promise(function(resolve, reject) {
     if(!config.group) {
       resolve();
