@@ -60,9 +60,11 @@ const applyRulesForTab = (tab) => {
 
   console.log(config)
 
-  moveSameUrlHost(tab)
-    .then(removeDuplicates(tab))
-    .then(trimTabs(tab));
+  promiseSerial([
+    removeDuplicates(tab),
+    trimTabs(tab),
+    moveSameUrlHost(tab),
+  ])
 }
 
 const moveSameUrlHost = (tab) => (
