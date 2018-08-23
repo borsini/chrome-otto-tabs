@@ -69,6 +69,8 @@ const applyRulesForTab = (tab) => {
 
 const moveSameUrlHost = (tab) => (
   new Promise(function(resolve, reject) {
+    console.log("Group tabs...")
+
     if(!config.group) {
       resolve();
       return;
@@ -78,7 +80,8 @@ const moveSameUrlHost = (tab) => (
     var hostQuery = url.origin + "/*";
 
     chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
-      if(tab.extData) {
+      console.log("group", tabs.length, "tabs with same host")
+      if(tab.extData != undefined) {
         groupVivaldiTabsPromise(tabs).then( () => resolve())
       } else {
         moveTabsPromise(tabs).then( () => resolve())
@@ -88,12 +91,15 @@ const moveSameUrlHost = (tab) => (
 );
 
 const moveTabsPromise = (tabs) => {
+  console.log("move tabs...")
   const firstIndex = tabs[0].index;
   const movePromises = tabs.map(((t, index) => () => movePromise(t.id, firstIndex + index)))
   return promiseSerial(movePromises)
 }
 
 const groupVivaldiTabsPromise = (tabs) => {
+  console.log("group vivaldi tabs...")
+
   const tabsToExtData = tabs.reduce( (old, curr) => {
       var data = {}
       try { data = JSON.parse(curr.extData) } catch(e) {}
@@ -125,6 +131,7 @@ const groupVivaldiTabsPromise = (tabs) => {
 
 const removeDuplicates = (tab) => (
   new Promise(function(resolve, reject) {
+    console.log("Removing duplicates...")
     if(!config.duplicates) {
       resolve();
       return;
@@ -148,6 +155,8 @@ const removeDuplicates = (tab) => (
 
 const trimTabs = (tab) => (
   new Promise(function(resolve, reject) {
+    console.log("Trimming tabs...")
+
     if(!config.host) {
       resolve();
       return;
