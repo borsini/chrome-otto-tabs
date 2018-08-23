@@ -20,9 +20,8 @@ function uuidv4() {
   )
 }
 
-const promiseSerial = promises =>
-  promises.map(p => () => p)
-    .reduce((promise, func) =>
+const promiseSerial = funcs =>
+      funcs.reduce((promise, func) =>
       promise.then(result => func().then(Array.prototype.concat.bind(result))),
       Promise.resolve([]))
 
@@ -60,10 +59,11 @@ const applyRulesForTab = (tab) => {
 
   console.log(config)
 
+  
   promiseSerial([
-    removeDuplicates(tab),
-    trimTabs(tab),
-    moveSameUrlHost(tab),
+    () => removeDuplicates(tab),
+    () => trimTabs(tab),
+    () => moveSameUrlHost(tab),
   ])
 }
 
@@ -89,7 +89,7 @@ const moveSameUrlHost = (tab) => (
 
 const moveTabsPromise = (tabs) => {
   const firstIndex = tabs[0].index;
-  const movePromises = tabs.map(((t, index) => movePromise(t.id, firstIndex + index)))
+  const movePromises = tabs.map(((t, index) => () => movePromise(t.id, firstIndex + index)))
   return promiseSerial(movePromises)
 }
 
@@ -118,7 +118,7 @@ const groupVivaldiTabsPromise = (tabs) => {
     const newExtData = tabsToExtData[tabId]
     newExtData.group = groupIdToUse
 
-    return updatePromise(tabId, { extData : JSON.stringify(newExtData) } );
+    return () => updatePromise(tabId, { extData : JSON.stringify(newExtData) } );
   }))
   return promiseSerial(updatePromises)
 }
