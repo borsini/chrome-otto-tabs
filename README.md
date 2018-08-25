@@ -20,13 +20,24 @@ Those feature can be toggled on and off. By default the first two are enabled.
 
 Tabs from same domain are grouped next to each other or stacked (Vivaldi).
 
+Behavior in Chrome
+![](pictures/grouped.gif)
+
+
+Behavior in Vivaldi
+![](pictures/stacked.gif)
+
 ### Remove duplicate tabs
 
 Tabs with the same url are closed. Only last open tab is kept.
 
+![](pictures/duplicated.gif)
+
 ### Remove older tabs
 
 No more than 5 tabs from the same domain are open at the same time.
+
+![](pictures/same_host.gif)
 
 ## Feedback
 
