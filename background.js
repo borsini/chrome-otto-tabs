@@ -6,6 +6,8 @@ var config = {
   host: false
 }
 
+const MAX_TABS_ALLOWED_WITH_SAME_HOST = 5
+
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -32,7 +34,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 /* Promises helpers */
-
 const movePromise = (id, index) => (
   new Promise(function(resolve, reject) {
     console.log("moving tab to index : ", index);
@@ -77,11 +78,7 @@ const queryPromise = (query) => (
 /********************/
 
 const applyRulesForTab = (tab) => {
-  console.log("apply rules for tab", tab);
-
-  console.log(config)
-
-  
+  console.log("apply otto rules for tab", tab);  
   promiseSerial([
     () => removeDuplicates(tab),
     () => trimTabs(tab),
@@ -91,12 +88,12 @@ const applyRulesForTab = (tab) => {
 
 const moveSameUrlHost = (tab) => (
   new Promise(function(resolve, reject) {
-    console.log("Group tabs...")
-
     if(!config.group) {
       resolve();
       return;
     }
+
+    console.log("Group tabs...")
 
     const url = new URL(tab.url);
     var hostQuery = url.origin + "/*";
@@ -149,11 +146,12 @@ const groupVivaldiTabsPromise = (tabs) => {
 
 const removeDuplicates = (tab) => (
   new Promise(function(resolve, reject) {
-    console.log("Removing duplicates...")
     if(!config.duplicates) {
       resolve();
       return;
     }
+
+    console.log("Removing duplicates...")
 
     queryPromise({ currentWindow: true, pinned: false })
     .then(allTabs => {
@@ -172,14 +170,12 @@ const removeDuplicates = (tab) => (
 
 const trimTabs = (tab) => (
   new Promise(function(resolve, reject) {
-    console.log("Trimming tabs...")
-
     if(!config.host) {
       resolve();
       return;
     }
 
-    const maxAllowed = 5
+    console.log("Trimming tabs...")
 
     const url = new URL(tab.url);
     var hostQuery = url.origin + "/*";
@@ -187,8 +183,8 @@ const trimTabs = (tab) => (
     queryPromise({url: hostQuery, currentWindow: true, pinned: false})
     .then( tabs => {
       console.log(tabs.length, "tabs avec le même host")
-      if(tabs.length > maxAllowed) {
-        const toRemove = tabs.filter(t => t.id != tab.id).slice(0, tabs.length - maxAllowed);
+      if(tabs.length > MAX_TABS_ALLOWED_WITH_SAME_HOST) {
+        const toRemove = tabs.filter(t => t.id != tab.id).slice(0, tabs.length - MAX_TABS_ALLOWED_WITH_SAME_HOST);
         console.log("trim tab ", toRemove)
         return promiseSerial(toRemove.map(t => () => removePromise(t.id)))
       } else {
