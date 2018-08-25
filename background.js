@@ -1,12 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 'use strict';
-
-// A rule
-// host (all, specific)
-// behavior (group, remove dups, trim, pin, archive)
 
 var config = {
   duplicates: true,
@@ -21,9 +13,9 @@ function uuidv4() {
 }
 
 const promiseSerial = funcs =>
-      funcs.reduce((promise, func) =>
-      promise.then(result => func().then(Array.prototype.concat.bind(result))),
-      Promise.resolve([]))
+  funcs.reduce((promise, func) =>
+  promise.then(result => func().then(Array.prototype.concat.bind(result))),
+  Promise.resolve([]))
 
 chrome.runtime.onMessage.addListener(function(message, send, sendResponse) {
   if(message == 'GET_CONFIG') {
@@ -39,12 +31,22 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+/* Promises helpers */
+
 const movePromise = (id, index) => (
   new Promise(function(resolve, reject) {
     console.log("moving tab to index : ", index);
     chrome.tabs.move(id, { index }, () => resolve());
   })
 );
+
+const moveTabsPromise = (tabs) => {
+  console.log("move tabs...")
+  const firstIndex = tabs[0].index;
+  const movePromises = tabs.map(((t, index) => () => movePromise(t.id, firstIndex + index)))
+  return promiseSerial(movePromises)
+    .then( () => Promise.resolve(tabs))
+}
 
 const updatePromise = (id, data) => (
   new Promise(function(resolve, reject) {
@@ -53,6 +55,21 @@ const updatePromise = (id, data) => (
   })
 );
 
+const removePromise = (id) => (
+  new Promise(function(resolve, reject) {
+    console.log("removing tab", id);
+    chrome.tabs.remove(parseInt(id),  () => { console.log("removed");resolve(); });
+  })
+);
+
+const queryPromise = (query) => (
+  new Promise(function(resolve, reject) {
+    console.log("querying tabs ", query);
+    chrome.tabs.query(query, resolve);
+  })
+);
+
+/********************/
 
 const applyRulesForTab = (tab) => {
   console.log("apply rules for tab", tab);
@@ -79,23 +96,18 @@ const moveSameUrlHost = (tab) => (
     const url = new URL(tab.url);
     var hostQuery = url.origin + "/*";
 
-    chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
-      console.log("group", tabs.length, "tabs with same host")
-      if(tab.extData != undefined) {
-        groupVivaldiTabsPromise(tabs).then( () => resolve())
+    queryPromise({url: hostQuery, currentWindow: true, pinned: false})
+    .then(moveTabsPromise)
+    .then( tabs => {
+      if(tab.extData != undefined) { //Vivaldi stacking feature is supported
+        return groupVivaldiTabsPromise(tabs)
       } else {
-        moveTabsPromise(tabs).then( () => resolve())
+        return Promise.resolve()
       }
-    });
+    })
+    .then( () => resolve())
   })
 );
-
-const moveTabsPromise = (tabs) => {
-  console.log("move tabs...")
-  const firstIndex = tabs[0].index;
-  const movePromises = tabs.map(((t, index) => () => movePromise(t.id, firstIndex + index)))
-  return promiseSerial(movePromises)
-}
 
 const groupVivaldiTabsPromise = (tabs) => {
   console.log("group vivaldi tabs...")
@@ -137,19 +149,18 @@ const removeDuplicates = (tab) => (
       return;
     }
 
-    chrome.tabs.query({}, function(allTabs) {
-      const tabs = allTabs.filter( t => t.url == tab.url)
-      console.log(tabs.length, "identical tabs")
-      if(tabs.length > 1) {
-        const toRemove = tabs.filter(t => t.id != tab.id);
-        console.log("remove tabs ", toRemove)
-        chrome.tabs.remove(toRemove.map(t => t.id)), function() {
-          resolve();
-        }
+    queryPromise({ currentWindow: true, pinned: false })
+    .then(allTabs => {
+      const tabs = allTabs.filter( t => t.url == tab.url && t.id != tab.id)
+      console.log(tabs.length, "identical tabs to tab id ", tab.id, " : ", tabs)
+      if(tabs.length > 0) {
+        console.log("remove tabs ", tabs)
+        return promiseSerial(tabs.map(t => () => removePromise(t.id)))
       } else {
-        resolve();
+        return Promise.resolve()
       }
-    });
+    })
+    .then(resolve);
   })
 );
 
@@ -167,19 +178,17 @@ const trimTabs = (tab) => (
     const url = new URL(tab.url);
     var hostQuery = url.origin + "/*";
 
-    chrome.tabs.query({url: hostQuery, currentWindow: true}, function(tabs) {
+    queryPromise({url: hostQuery, currentWindow: true, pinned: false})
+    .then( tabs => {
       console.log(tabs.length, "tabs avec le même host")
       if(tabs.length > maxAllowed) {
         const toRemove = tabs.filter(t => t.id != tab.id).slice(0, tabs.length - maxAllowed);
         console.log("trim tab ", toRemove)
-        
-        chrome.tabs.remove(toRemove.map(t => t.id),  function() { 
-          resolve();
-        })
-
+        return promiseSerial(toRemove.map(t => () => removePromise(t.id)))
       } else {
-        resolve();
+        return Promise.resolve()
       }
-    });
+    })
+    .then(resolve);
   })
 );
