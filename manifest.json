@@ -1,7 +1,7 @@
 {
     "name": "Otto Tabs",
     "description" : "Smart tabs management",
-    "version": "0.0.4",
+    "version": "0.1.0",
     "manifest_version": 2,
     "permissions": ["tabs"],
     "browser_action": {
