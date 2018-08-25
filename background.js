@@ -41,7 +41,12 @@ const movePromise = (id, index) => (
 );
 
 const moveTabsPromise = (tabs) => {
-  console.log("move tabs...")
+  if(tabs.length < 2) {
+    console.log("no need to move", tabs.length, "tabs")
+    return Promise.resolve([])
+  }
+
+  console.log("move tabs...", tabs)
   const firstIndex = tabs[0].index;
   const movePromises = tabs.map(((t, index) => () => movePromise(t.id, firstIndex + index)))
   return promiseSerial(movePromises)
@@ -122,14 +127,15 @@ const groupVivaldiTabsPromise = (tabs) => {
       } 
     }, {})
 
-  const existingGroupId = Object.values(tabsToExtData)
-  .map(d => d.group)
-  .find(g => g);
-  
-  var groupIdToUse = existingGroupId ? existingGroupId : uuidv4()
-
-  if(tabs.length === 1) {
-    groupIdToUse = null
+  var groupIdToUse = null
+  if(tabs.length > 1) {
+    const existingGroupId = Object.values(tabsToExtData)
+    .map(d => d.group)
+    .find(g => g);
+    var groupIdToUse = existingGroupId ? existingGroupId : uuidv4()
+    console.log("group id to use", groupIdToUse)
+  } else {
+    console.log("only one tab, remove it's group id")
   }
 
   const updatePromises = Object.keys(tabsToExtData).map((tabId => {
