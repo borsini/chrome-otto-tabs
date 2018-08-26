@@ -44,7 +44,7 @@ const movePromise = (id, index) => (
 const moveTabsPromise = (tabs) => {
   if(tabs.length < 2) {
     console.log("no need to move", tabs.length, "tabs")
-    return Promise.resolve([])
+    return Promise.resolve(tabs)
   }
 
   console.log("move tabs...", tabs)
