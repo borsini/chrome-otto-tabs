@@ -10,17 +10,17 @@
 
 
 
-function $$(id) {
+function $$(id: string) {
   return document.querySelector(id);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   
-  var duplicates = $$("input[name=duplicates]")
-  var group = $$("input[name=group]")
-  var host = $$("input[name=host]")
+  var duplicates = $$("input[name=duplicates]") as HTMLInputElement
+  var group = $$("input[name=group]") as HTMLInputElement
+  var host = $$("input[name=host]") as HTMLInputElement
 
-  chrome.runtime.sendMessage('', 'GET_CONFIG', function(config) {
+  chrome.runtime.sendMessage('', 'GET_CONFIG', function(config: RulesConfig) {
     duplicates.checked = config.duplicates
     group.checked = config.group
     host.checked = config.host

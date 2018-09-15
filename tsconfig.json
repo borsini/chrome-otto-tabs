@@ -4,6 +4,7 @@
         "allowJs": true,
         "target": "es5",
         "strictNullChecks": true,
+        "noImplicitAny": true,
         "lib": [
             "es2017",
             "dom"
