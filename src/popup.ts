@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var group = $$("input[name=group]")
   var host = $$("input[name=host]")
 
-  chrome.runtime.sendMessage(null, 'GET_CONFIG', function(config) {
+  chrome.runtime.sendMessage('', 'GET_CONFIG', function(config) {
     duplicates.checked = config.duplicates
     group.checked = config.group
     host.checked = config.host
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log(document)
 
   document.querySelectorAll('input').forEach(s => s.addEventListener('change', function() {
-      chrome.runtime.sendMessage(null, {
+      chrome.runtime.sendMessage('', {
         duplicates: duplicates.checked,
         group: group.checked,
         host: host.checked

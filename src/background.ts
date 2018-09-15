@@ -1,5 +1,3 @@
-'use strict';
-
 var config = {
   duplicates: true,
   group: true,
@@ -8,9 +6,10 @@ var config = {
 
 const MAX_TABS_ALLOWED_WITH_SAME_HOST = 5
 
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+function uuidv4(): string {
+  return (""+1e7+-1e3+-4e3+-8e3+-1e11)
+  .replace(/[018]/g, c => (c as any ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> (c as any) / 4)
+  .toString(16)
   )
 }
 
@@ -21,6 +20,7 @@ const promiseSerial = funcs =>
 
 chrome.runtime.onMessage.addListener(function(message, send, sendResponse) {
   if(message == 'GET_CONFIG') {
+    console.log('get config received')
     sendResponse(config)
   } else {
     console.log('new config', message)
@@ -68,7 +68,7 @@ const removePromise = (id) => (
   })
 );
 
-const queryPromise = (query) => (
+const queryPromise = (query): Promise<any[]> => (
   new Promise(function(resolve, reject) {
     console.log("querying tabs ", query);
     chrome.tabs.query(query, resolve);
@@ -114,7 +114,7 @@ const moveSameUrlHost = (tab) => (
 const groupVivaldiTabsPromise = (tabs) => {
   console.log("group vivaldi tabs...")
 
-  const tabsToExtData = tabs.reduce( (old, curr) => {
+  const tabsToExtData: { [k: number]: { group?: string} } = tabs.reduce( (old, curr) => {
       var data = {}
       try { data = JSON.parse(curr.extData) } catch(e) {}
 
@@ -124,12 +124,12 @@ const groupVivaldiTabsPromise = (tabs) => {
       } 
     }, {})
 
-  var groupIdToUse = null
+  var groupIdToUse : string | null = null
   if(tabs.length > 1) {
     const existingGroupId = Object.values(tabsToExtData)
     .map(d => d.group)
-    .find(g => g);
-    var groupIdToUse = existingGroupId ? existingGroupId : uuidv4()
+    .find(g => g !== undefined);
+    groupIdToUse = existingGroupId ? existingGroupId : uuidv4()
     console.log("group id to use", groupIdToUse)
   } else {
     console.log("only one tab, remove it's group id")
