@@ -74,9 +74,13 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 chrome.storage.sync.get(['config'], function(result) {
-  console.log('Retrieved config is', result.config);
-  config = result.config
-  chrome.runtime.sendMessage('', 'NEW_CONFIG')
+  const conf = result.config
+  console.log('Retrieved config is', conf);
+
+  if(conf !== undefined) {
+    config = result.config
+    chrome.runtime.sendMessage('', 'NEW_CONFIG')
+  }
 });
 
 /* Promises helpers */
