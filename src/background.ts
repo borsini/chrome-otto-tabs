@@ -59,12 +59,24 @@ chrome.runtime.onMessage.addListener(function(message, _, sendResponse) {
   } else {
     console.log('new config', message)
     config = message
+
+    //Sync config to chrome storage
+    chrome.storage.sync.set({'config': config}, function() {
+      console.log('Config has been synced', config);
+    });
+
   }});
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if(changeInfo.url) {  
     applyRulesForTab(tab)
   }
+});
+
+chrome.storage.sync.get(['config'], function(result) {
+  console.log('Retrieved config is', result.config);
+  config = result.config
+  chrome.runtime.sendMessage('', 'NEW_CONFIG')
 });
 
 /* Promises helpers */

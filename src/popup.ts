@@ -15,12 +15,25 @@ document.addEventListener('DOMContentLoaded', function () {
   var group_domain = $$("#group_domain") as HTMLSelectElement
   var host = $$("input[name=host]") as HTMLInputElement
 
-  chrome.runtime.sendMessage('', 'GET_CONFIG', function(config: RulesConfig) {
-    duplicates.checked = config.duplicates.isActivated
-    group.checked = config.group.isActivated
-    group_domain.options[config.group.type === 'FULL_DOMAIN' ? 0 : 1].selected = true
-    host.checked = config.host.isActivated
+  const askForConfig = () => {
+    chrome.runtime.sendMessage('', 'GET_CONFIG', function(config: RulesConfig) {
+      console.log("display configuration", config)
+
+      duplicates.checked = config.duplicates.isActivated
+      group.checked = config.group.isActivated
+      group_domain.options[config.group.type === 'FULL_DOMAIN' ? 0 : 1].selected = true
+      host.checked = config.host.isActivated
+    })
+  }
+  
+  chrome.runtime.onMessage.addListener( (message, _, sendResponse) => {
+    if(message == 'NEW_CONFIG') {
+      console.log("new configuration to display")
+      askForConfig()
+    }
   })
+    
+  askForConfig()
 
   const onUIChanged = () => {
     const conf: RulesConfig =  {
