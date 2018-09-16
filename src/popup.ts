@@ -21,18 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
   var host = $$("input[name=host]") as HTMLInputElement
 
   chrome.runtime.sendMessage('', 'GET_CONFIG', function(config: RulesConfig) {
-    duplicates.checked = config.duplicates
-    group.checked = config.group
-    host.checked = config.host
+    duplicates.checked = config.duplicates.isActivated
+    group.checked = config.group.isActivated
+    host.checked = config.host.isActivated
   })
 
   console.log(document)
 
   document.querySelectorAll('input').forEach(s => s.addEventListener('change', function() {
-      chrome.runtime.sendMessage('', {
-        duplicates: duplicates.checked,
-        group: group.checked,
-        host: host.checked
-      })
+      const conf: RulesConfig =  {
+        duplicates: {
+          isActivated: duplicates.checked,
+        },
+        group: {
+          isActivated: group.checked,
+        },
+        host: {
+          isActivated: host.checked,
+        }
+      }
+      chrome.runtime.sendMessage('', conf)
   }));
 });

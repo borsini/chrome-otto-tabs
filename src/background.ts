@@ -1,13 +1,25 @@
 interface RulesConfig {
-  duplicates: boolean,
-  group: boolean,
-  host: boolean
+  duplicates: {
+    isActivated: boolean,
+  }
+  group: {
+    isActivated: boolean,
+  }
+  host: {
+    isActivated: boolean,
+  }
 }
 
 var config: RulesConfig = {
-  duplicates: true,
-  group: true,
-  host: false
+  duplicates: {
+    isActivated: true,
+  },
+  group: {
+    isActivated: true,
+  },
+  host: {
+    isActivated: true,
+  }
 }
 
 interface VivaldiTab extends chrome.tabs.Tab {
