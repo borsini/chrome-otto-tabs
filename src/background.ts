@@ -4,6 +4,7 @@ interface RulesConfig {
   }
   group: {
     isActivated: boolean,
+    type: "FULL_DOMAIN" | "SUB_DOMAIN"
   }
   host: {
     isActivated: boolean,
@@ -16,6 +17,7 @@ var config: RulesConfig = {
   },
   group: {
     isActivated: true,
+    type: "FULL_DOMAIN"
   },
   host: {
     isActivated: true,
@@ -120,6 +122,16 @@ const applyRulesForTab = (tab: chrome.tabs.Tab) => {
   ])
 }
 
+const getQueryToGroup = (url: URL) => {
+  if(config.group.type === 'SUB_DOMAIN') {
+    const hostname = url.hostname.startsWith("www.") ? url.hostname.substring(4) : url.hostname
+    const domains = hostname.split(".")
+    return "*://*." + (domains.length > 2 ? domains.slice(1) : domains).join(".") + "/*"
+  } else {
+    return "*://" + url.hostname + "/*"
+  }
+}
+
 const moveSameUrlHost = (tab: chrome.tabs.Tab | VivaldiTab) => (
   new Promise(function(resolve, reject) {
     if(!config.group || !tab.url) {
@@ -129,9 +141,7 @@ const moveSameUrlHost = (tab: chrome.tabs.Tab | VivaldiTab) => (
 
     console.log("Group tabs...")
 
-    const url = new URL(tab.url);
-    var hostQuery = url.origin + "/*";
-
+    const hostQuery = getQueryToGroup(new URL(tab.url));
     queryPromise({url: hostQuery, currentWindow: true, pinned: false})
     .then(moveTabsPromise)
     .then( tabs => {

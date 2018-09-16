@@ -4,12 +4,6 @@
 
 'use strict';
 
-// A rule
-// host (all, specific)
-// behavior (group, remove dups, trim, pin, archive)
-
-
-
 function $$(id: string) {
   return document.querySelector(id);
 }
@@ -18,28 +12,33 @@ document.addEventListener('DOMContentLoaded', function () {
   
   var duplicates = $$("input[name=duplicates]") as HTMLInputElement
   var group = $$("input[name=group]") as HTMLInputElement
+  var group_domain = $$("#group_domain") as HTMLSelectElement
   var host = $$("input[name=host]") as HTMLInputElement
 
   chrome.runtime.sendMessage('', 'GET_CONFIG', function(config: RulesConfig) {
     duplicates.checked = config.duplicates.isActivated
     group.checked = config.group.isActivated
+    group_domain.options[config.group.type === 'FULL_DOMAIN' ? 0 : 1].selected = true
     host.checked = config.host.isActivated
   })
 
-  console.log(document)
-
-  document.querySelectorAll('input').forEach(s => s.addEventListener('change', function() {
-      const conf: RulesConfig =  {
-        duplicates: {
-          isActivated: duplicates.checked,
-        },
-        group: {
-          isActivated: group.checked,
-        },
-        host: {
-          isActivated: host.checked,
-        }
+  const onUIChanged = () => {
+    const conf: RulesConfig =  {
+      duplicates: {
+        isActivated: duplicates.checked,
+      },
+      group: {
+        isActivated: group.checked,
+        type: group_domain.selectedOptions[0].value === 'full_domain' ? 'FULL_DOMAIN' : 'SUB_DOMAIN'
+      },
+      host: {
+        isActivated: host.checked,
       }
-      chrome.runtime.sendMessage('', conf)
-  }));
+    }
+    chrome.runtime.sendMessage('', conf)
+  }
+
+  group_domain.addEventListener('input', onUIChanged)
+  document.querySelectorAll('input').forEach(s => s.addEventListener('change', onUIChanged))
+  
 });

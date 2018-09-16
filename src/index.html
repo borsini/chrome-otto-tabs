@@ -2,23 +2,24 @@
     <body>
       <h1>Otto Tabs</h1>
 
-      <div style="width:300px">
+      <div style="width:400px">
 
         <div>
-          <input type="checkbox" id="duplicates" name="duplicates"
-                value="duplicates" checked/>
+          <input type="checkbox" id="duplicates" name="duplicates" value="duplicates" checked/>
           <label for="duplicates">Remove duplicate tabs</label>
         </div>
 
         <div>
-          <input type="checkbox" id="group" name="group"
-                value="group" checked />
-          <label for="group">Group tabs with same host</label>
+          <input type="checkbox" id="group" name="group" value="group" checked />
+          <label for="group">Group tabs with</label>
+          <select id="group_domain">
+            <option value="full_domain">exact same host</option>
+            <option value="sub_domain">same host but different subdomains</option>
+          </select>
         </div>
 
         <div>
-            <input type="checkbox" id="host" name="host"
-                  value="host" checked />
+            <input type="checkbox" id="host" name="host" value="host" checked />
             <label for="host">Remove tabs with same host (if more than 5)</label>
           </div>
 
