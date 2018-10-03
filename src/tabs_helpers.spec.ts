@@ -176,6 +176,52 @@ describe('trimTabs()', function () {
       },
       host: {
         isActivated: true,
+        maxTabsAllowed: 1,
+      }
+    }
+
+    const t2 = { ...tab, id: 2 }
+
+    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+      return Promise.resolve([t2])
+    }
+
+    const removePromise: RemovePromise = (id: number) => {
+      return Promise.resolve()
+    }
+
+    const removeSpy = chai.spy(removePromise)
+
+    return trimTabs(tab, conf, queryPromise, removeSpy).then(() => {
+      expect(removeSpy).to.have.been.called.always.with.exactly(2)
+    })
+  })
+
+  it('trims the oldest tab', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 1,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const conf: RulesConfig = {
+      duplicates: {
+        isActivated: true,
+      },
+      group: {
+        isActivated: true,
+        type: "FULL_DOMAIN"
+      },
+      host: {
+        isActivated: true,
         maxTabsAllowed: 2,
       }
     }
@@ -195,7 +241,8 @@ describe('trimTabs()', function () {
     const removeSpy = chai.spy(removePromise)
 
     return trimTabs(tab, conf, queryPromise, removeSpy).then(() => {
-      expect(removeSpy).to.have.been.called.with.exactly(2)
+      expect(removeSpy).to.have.been.called.with(2)
+      expect(removeSpy).to.have.been.called.with(3)
     })
   })
 })

@@ -226,7 +226,7 @@ export const trimTabs = (tab: chrome.tabs.Tab,
       if(tabs.length > config.host.maxTabsAllowed) {
         const toRemove = tabs
           .filter(t => t.id !== undefined && t.id != tab.id)
-          .slice(0, tabs.length - config.host.maxTabsAllowed);
+          .slice(0, tabs.length - config.host.maxTabsAllowed + 1);
 
         console.log("trim tab ", toRemove)
         return promiseSerial(toRemove.map(t => () => removePromise(t.id!)))
