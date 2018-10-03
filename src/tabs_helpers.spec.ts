@@ -7,7 +7,8 @@ import {
   QueryPromise,
   RulesConfig,
   RemovePromise,
-  trimTabs
+  trimTabs,
+  removeDuplicates
 } from './tabs_helpers'
 import { expect } from 'chai';
 
@@ -244,5 +245,151 @@ describe('trimTabs()', function () {
       expect(removeSpy).to.have.been.called.with(2)
       expect(removeSpy).to.have.been.called.with(3)
     })
+  })
+})
+
+
+describe('removeDuplicates()', function () {
+  it('doesnt do anything if config disabled', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 123,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const conf: RulesConfig = {
+      duplicates: {
+        isActivated: false,
+      },
+      group: {
+        isActivated: true,
+        type: "FULL_DOMAIN"
+      },
+      host: {
+        isActivated: false,
+        maxTabsAllowed: 5,
+      }
+    }
+
+    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+      return Promise.resolve([])
+    }
+
+    const removePromise: RemovePromise = (id: number) => {
+      return Promise.resolve()
+    }
+
+    const removeSpy = chai.spy(removePromise)
+
+    return removeDuplicates(tab, conf, queryPromise, removeSpy).then(() => {
+      expect(removeSpy).not.to.have.been.called()
+    })
+
+  })
+
+  it('doesnt do anything if tabs have different urls', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 123,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const conf: RulesConfig = {
+      duplicates: {
+        isActivated: true,
+      },
+      group: {
+        isActivated: true,
+        type: "FULL_DOMAIN"
+      },
+      host: {
+        isActivated: false,
+        maxTabsAllowed: 5,
+      }
+    }
+
+    const tab2 = { ...tab, id: 321, url: "http://lru"}
+
+    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+      return Promise.resolve([tab, tab2])
+    }
+
+    const removePromise: RemovePromise = (id: number) => {
+      return Promise.resolve()
+    }
+
+    const removeSpy = chai.spy(removePromise)
+
+    return removeDuplicates(tab, conf, queryPromise, removeSpy).then(() => {
+      expect(removeSpy).not.to.have.been.called()
+    })
+
+  })
+
+  it('removes first tabs if tabs have same urls', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 4,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const conf: RulesConfig = {
+      duplicates: {
+        isActivated: true,
+      },
+      group: {
+        isActivated: true,
+        type: "FULL_DOMAIN"
+      },
+      host: {
+        isActivated: false,
+        maxTabsAllowed: 5,
+      }
+    }
+
+    const tab2 = { ...tab, id: 1, url: "http://url"}
+    const tab3 = { ...tab, id: 2, url: "http://lru"}
+    const tab4 = { ...tab, id: 3, url: "http://url"}
+
+
+    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+      return Promise.resolve([tab, tab2, tab3, tab4])
+    }
+
+    const removePromise: RemovePromise = (id: number) => {
+      return Promise.resolve()
+    }
+
+    const removeSpy = chai.spy(removePromise)
+
+    return removeDuplicates(tab, conf, queryPromise, removeSpy).then(() => {
+      expect(removeSpy).to.have.been.called.with(1)
+      expect(removeSpy).to.have.been.called.with(3)
+    })
+
   })
 })
