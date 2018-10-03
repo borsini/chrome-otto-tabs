@@ -9,6 +9,7 @@ export interface RulesConfig {
     }
     host: {
       isActivated: boolean,
+      maxTabsAllowed: number,
     }
   }
   
@@ -25,8 +26,6 @@ export interface RulesConfig {
   const isVivaldiTab = (object: any): object is VivaldiTab => {
     return object && 'extData' in object;
   };
-  
-  const MAX_TABS_ALLOWED_WITH_SAME_HOST = 5
   
   function uuidv4(): string {
     return (""+1e7+-1e3+-4e3+-8e3+-1e11)
@@ -224,10 +223,10 @@ export const trimTabs = (tab: chrome.tabs.Tab,
     queryPromise({url: hostQuery, currentWindow: true, pinned: false})
     .then( tabs => {
       console.log(tabs.length, "tabs with same host")
-      if(tabs.length > MAX_TABS_ALLOWED_WITH_SAME_HOST) {
+      if(tabs.length > config.host.maxTabsAllowed) {
         const toRemove = tabs
           .filter(t => t.id !== undefined && t.id != tab.id)
-          .slice(0, tabs.length - MAX_TABS_ALLOWED_WITH_SAME_HOST);
+          .slice(0, tabs.length - config.host.maxTabsAllowed);
 
         console.log("trim tab ", toRemove)
         return promiseSerial(toRemove.map(t => () => removePromise(t.id!)))

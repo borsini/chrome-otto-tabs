@@ -13,6 +13,7 @@ var config: RulesConfig = {
   },
   host: {
     isActivated: true,
+    maxTabsAllowed: 5,
   }
 }
 

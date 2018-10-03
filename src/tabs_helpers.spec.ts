@@ -41,6 +41,7 @@ describe('trimTabs()', function () {
       },
       host: {
         isActivated: false,
+        maxTabsAllowed: 5,
       }
     }
 
@@ -85,6 +86,7 @@ describe('trimTabs()', function () {
       },
       host: {
         isActivated: true,
+        maxTabsAllowed: 5,
       }
     }
 
@@ -129,6 +131,7 @@ describe('trimTabs()', function () {
       },
       host: {
         isActivated: true,
+        maxTabsAllowed: 5,
       }
     }
 
@@ -173,24 +176,21 @@ describe('trimTabs()', function () {
       },
       host: {
         isActivated: true,
+        maxTabsAllowed: 2,
       }
     }
 
     const t2 = { ...tab, id: 2 }
     const t3 = { ...tab, id: 3 }
     const t4 = { ...tab, id: 4 }
-    const t5 = { ...tab, id: 5 }
-    const t6 = { ...tab, id: 6 }
-    const t7 = { ...tab, id: 7 }
 
     const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([t2, t3, t4, t5, t6, t7])
+      return Promise.resolve([t2, t3, t4])
     }
 
     const removePromise: RemovePromise = (id: number) => {
       return Promise.resolve()
     }
-
 
     const removeSpy = chai.spy(removePromise)
 
