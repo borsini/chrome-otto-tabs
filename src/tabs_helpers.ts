@@ -93,7 +93,7 @@ const queryPromise: QueryPromise = (query: chrome.tabs.QueryInfo): Promise<chrom
 export const applyRulesForTab = (tab: chrome.tabs.Tab, config: RulesConfig) => {
   console.log("apply otto rules for tab", tab);  
   promiseSerial([
-    () => removeDuplicates(tab, config, queryPromise),
+    () => removeDuplicates(tab, config, queryPromise, removePromise),
     () => trimTabs(tab, config, queryPromise, removePromise),
     () => moveSameUrlHost(tab, config, queryPromise, moveTabsPromise, groupVivaldiTabsPromise, updatePromise, uuidv4),
   ])
@@ -179,10 +179,11 @@ export const groupVivaldiTabsPromise: GroupVivaldiTab = (tabs: VivaldiTab[], upd
 export const removeDuplicates = (
   tab: chrome.tabs.Tab,
   config: RulesConfig,
-  queryPromise: QueryPromise) => (
+  queryPromise: QueryPromise,
+  removePromise: RemovePromise) => (
 
   new Promise((resolve) => {
-    if(!config.duplicates) {
+    if(!config.duplicates.isActivated) {
       resolve();
       return;
     }
