@@ -121,7 +121,7 @@ export const moveSameUrlHost = (
   moveTabsPromise: MoveTabsPromise,
   groupVivaldiTabsPromise: GroupVivaldiTab) => (
   new Promise(function(resolve, reject) {
-    if(!config.group || !tab.url) {
+    if(!config.group.isActivated || !tab.url) {
       resolve();
       return;
     }

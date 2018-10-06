@@ -8,7 +8,10 @@ import {
   RulesConfig,
   RemovePromise,
   trimTabs,
-  removeDuplicates
+  removeDuplicates,
+  moveSameUrlHost,
+  MoveTabsPromise,
+  GroupVivaldiTab
 } from './tabs_helpers'
 import { expect } from 'chai';
 
@@ -389,6 +392,60 @@ describe('removeDuplicates()', function () {
     return removeDuplicates(tab, conf, queryPromise, removeSpy).then(() => {
       expect(removeSpy).to.have.been.called.with(1)
       expect(removeSpy).to.have.been.called.with(3)
+    })
+
+  })
+})
+
+describe('moveSameUrlHost()', function () {
+  it('doesnt do anything if config disabled', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 123,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const conf: RulesConfig = {
+      duplicates: {
+        isActivated: false,
+      },
+      group: {
+        isActivated: false,
+        type: "FULL_DOMAIN"
+      },
+      host: {
+        isActivated: false,
+        maxTabsAllowed: 5,
+      }
+    }
+
+    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+      return Promise.resolve([])
+    }
+
+    const moveTabPromise: MoveTabsPromise = (tabs: chrome.tabs.Tab[]) => {
+      return Promise.resolve([])
+    }
+
+    const moveSpy = chai.spy(moveTabPromise)
+
+    const groupVivaldiTabs: GroupVivaldiTab = (tabs: chrome.tabs.Tab[]) => {
+      return Promise.resolve([])
+    }
+
+    const vivaldiSpy = chai.spy(groupVivaldiTabs)
+
+    return moveSameUrlHost(tab, conf, queryPromise, moveSpy, vivaldiSpy).then(() => {
+      expect(moveSpy).not.to.have.been.called()
+      expect(vivaldiSpy).not.to.have.been.called()
     })
 
   })
