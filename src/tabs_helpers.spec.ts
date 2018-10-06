@@ -10,8 +10,9 @@ import {
   trimTabs,
   removeDuplicates,
   moveSameUrlHost,
-  MoveTabsPromise,
-  GroupVivaldiTab
+  RegroupTabsPromise,
+  GroupVivaldiTab,
+  regroupTabsPromise
 } from './tabs_helpers'
 import { expect } from 'chai';
 
@@ -431,11 +432,11 @@ describe('moveSameUrlHost()', function () {
       return Promise.resolve([])
     }
 
-    const moveTabPromise: MoveTabsPromise = (tabs: chrome.tabs.Tab[]) => {
+    const regroupTabsPromise: RegroupTabsPromise = (tabs: chrome.tabs.Tab[]) => {
       return Promise.resolve([])
     }
 
-    const moveSpy = chai.spy(moveTabPromise)
+    const moveSpy = chai.spy(regroupTabsPromise)
 
     const groupVivaldiTabs: GroupVivaldiTab = (tabs: chrome.tabs.Tab[]) => {
       return Promise.resolve([])
@@ -448,5 +449,74 @@ describe('moveSameUrlHost()', function () {
       expect(vivaldiSpy).not.to.have.been.called()
     })
 
+  })
+})
+
+describe('regroupTabsPromise()', function () {
+  it('doesnt do anything if only one tab', () => {
+    const tab: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 123,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+  
+    const movePromise = (id: number, index: number) => {
+      return Promise.resolve<chrome.tabs.Tab[]>([])
+    }
+
+    const moveSpy = chai.spy(movePromise)
+
+    return regroupTabsPromise(movePromise)([tab]).then(() => {
+      expect(moveSpy).not.to.have.been.called()
+    })
+  })
+
+  it('regroups tabs', () => {
+    const tab1: chrome.tabs.Tab = {
+      index: 1,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 123,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+
+    const tab2: chrome.tabs.Tab = {
+      index: 4,
+      url: "http://url",
+      pinned: false,
+      highlighted: false,
+      windowId: 1,
+      active: true,
+      id: 321,
+      incognito: false,
+      selected: false,
+      discarded: false,
+      autoDiscardable: false
+    }
+  
+    const movePromise = () => {
+      return Promise.resolve<chrome.tabs.Tab[]>([])
+    }
+
+    const moveSpy = chai.spy(movePromise)
+
+    return regroupTabsPromise(moveSpy)([tab1, tab2]).then(() => {
+      expect(moveSpy).to.have.been.called.with(123, 1)
+      expect(moveSpy).to.have.been.called.with(321, 2)
+    })
   })
 })
