@@ -95,8 +95,13 @@ export const applyRulesForTab = (tab: chrome.tabs.Tab, config: RulesConfig) => {
   promiseSerial([
     () => removeDuplicates(tab, config, queryPromise, removePromise),
     () => trimTabs(tab, config, queryPromise, removePromise),
-    () => moveSameUrlHost(tab, config, queryPromise, moveTabsPromise, groupVivaldiTabsPromise, updatePromise, uuidv4),
+    () => moveSameUrlHost(tab, config, queryPromise, moveTabsPromise, moveVivaldi(updatePromise, uuidv4)),
   ])
+}
+
+const moveVivaldi = (updatePromise: UpdatePromise, getUUID: () => string): GroupVivaldiTab => 
+(tabs: VivaldiTab[]) => {
+  return groupVivaldiTabsPromise(tabs, updatePromise, uuidv4)
 }
 
 const getQueryToGroup = (url: URL, config: RulesConfig) => {
@@ -114,9 +119,7 @@ export const moveSameUrlHost = (
   config: RulesConfig,
   queryPromise: QueryPromise,
   moveTabsPromise: MoveTabsPromise,
-  groupVivaldiTabsPromise: GroupVivaldiTab,
-  updatePromise: UpdatePromise,
-  getUUID: () => string) => (
+  groupVivaldiTabsPromise: GroupVivaldiTab) => (
   new Promise(function(resolve, reject) {
     if(!config.group || !tab.url) {
       resolve();
@@ -130,7 +133,7 @@ export const moveSameUrlHost = (
     .then(moveTabsPromise)
     .then( tabs => {
       if(isVivaldiTab(tab)) { //Vivaldi stacking feature is supported
-        return groupVivaldiTabsPromise(tabs as VivaldiTab[], updatePromise, getUUID)
+        return groupVivaldiTabsPromise(tabs as VivaldiTab[])
       } else {
         return Promise.resolve()
       }
@@ -139,8 +142,9 @@ export const moveSameUrlHost = (
   })
 );
 
-export type GroupVivaldiTab = (tabs: VivaldiTab[], updatePromise: UpdatePromise, getUUID: () => string ) => any
-export const groupVivaldiTabsPromise: GroupVivaldiTab = (tabs: VivaldiTab[], updatePromise: UpdatePromise, getUUID: () => string ) => {
+export type GroupVivaldiTab = (tabs: VivaldiTab[]) => Promise<any>
+
+export const groupVivaldiTabsPromise = (tabs: VivaldiTab[], updatePromise: UpdatePromise, getUUID: () => string ) => {
   console.log("group vivaldi tabs...")
 
   const tabsToExtData: { [k: number]: { group: string | null} } = tabs
