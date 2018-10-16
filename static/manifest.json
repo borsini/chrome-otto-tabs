@@ -8,9 +8,9 @@
       "default_popup": "index.html"
     },
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
-      },
+      "page": "background.html",
+      "persistent": false
+    },
     "commands": {    },
     "icons": { 
       "48": "ic_launcher_round_48.png",

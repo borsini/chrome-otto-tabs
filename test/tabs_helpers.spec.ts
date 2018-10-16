@@ -13,7 +13,7 @@ import {
   RegroupTabsPromise,
   GroupVivaldiTab,
   regroupTabsPromise
-} from './tabs_helpers'
+} from '../src/tabs_helpers'
 import { expect } from 'chai';
 
 beforeEach(() => {

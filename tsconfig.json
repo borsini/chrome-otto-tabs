@@ -2,7 +2,7 @@
     "compilerOptions": {
         "outDir": "./build",
         "allowJs": true,
-        "target": "es5",
+        "target": "es6",
         "strictNullChecks": true,
         "noImplicitAny": true,
         "lib": [

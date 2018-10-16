@@ -1,7 +1,7 @@
 import {
   applyRulesForTab,
   RulesConfig
-} from './tabs_helpers'
+} from './tabs_helpers.js'
 
 var config: RulesConfig = {
   duplicates: {
