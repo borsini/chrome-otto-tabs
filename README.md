@@ -41,4 +41,14 @@ No more than 5 tabs from the same domain are open at the same time.
 
 ## Feedback
 
-Feel free to fill a ticket [here](https://github.com/Benlenem/chrome-otto-tabs/issues) ! 
+Feel free to fill a ticket [here](https://github.com/Benlenem/chrome-otto-tabs/issues) !
+
+## Want to build and install the extension yourself ?
+
+* Install [yarn](https://classic.yarnpkg.com/en/docs/install/)
+* Download or clone the project
+* Using a terminal go to the project root folder
+* Type `yarn archive`. This will execute the unit tests and create a `build` folder. This folder contains all the extension files.
+* Go to either vivaldi://extensions/ or chrome://extensions/ according to your browser
+* Install the extension as unpacked by selecting the `build` folder
+
