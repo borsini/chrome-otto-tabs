@@ -14,12 +14,12 @@ export interface RulesConfig {
   }
   
   interface VivaldiTab extends chrome.tabs.Tab {
-    readonly extData: string;
+    readonly vivExtData: string;
   }
   
   
   interface VivaldiUpdateProperties extends chrome.tabs.UpdateProperties {
-    extData?: string;
+    vivExtData?: string;
   }
  
 export type RemovePromise = (tabId: number) => Promise<any>
@@ -29,7 +29,7 @@ export type RegroupTabsPromise = (tabs: chrome.tabs.Tab[]) => Promise<chrome.tab
   
   
   const isVivaldiTab = (object: any): object is VivaldiTab => {
-    return object && 'extData' in object;
+    return object && 'vivExtData' in object;
   };
   
   function uuidv4(): string {
@@ -160,7 +160,7 @@ export const groupVivaldiTabsPromise = (tabs: VivaldiTab[], updatePromise: Updat
     .filter(t => t.id !== undefined)
     .reduce( (old, curr) => {
         var data = {}
-        try { data = JSON.parse(curr.extData) } catch(e) {}
+        try { data = JSON.parse(curr.vivExtData) } catch(e) {}
 
         return {
           ...old,
@@ -184,7 +184,7 @@ export const groupVivaldiTabsPromise = (tabs: VivaldiTab[], updatePromise: Updat
     const newExtData = tabsToExtData[tabId]
     newExtData.group = groupIdToUse
 
-    return () => updatePromise(tabId, { extData : JSON.stringify(newExtData) } );
+    return () => updatePromise(tabId, { vivExtData : JSON.stringify(newExtData) } );
   }))
   return promiseSerial(updatePromises)
 }
