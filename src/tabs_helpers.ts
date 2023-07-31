@@ -51,21 +51,21 @@ const promiseSerial = (funcs : Array<() => Promise<any>>) =>
 export const chromeTabsMovePromise = (id: number, index: number): Promise<ChromeTab[]> => (
   new Promise(function(resolve, reject) {
     console.log("moving tab to index : ", index);
-    chrome.tabs.move(id, { index }, () => resolve());
+    chrome.tabs.move(id, { index }, () => resolve([]));
   })
 );
 
 const chromeTabsUpdatePromise: UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties | VivaldiUpdateProperties): Promise<any> => (
   new Promise(function(resolve, reject) {
     console.log("updating tab", tabId, data);
-    chrome.tabs.update(tabId, data, (t) => resolve());
+    chrome.tabs.update(tabId, data, (t) => resolve([]));
   })
 );
 
 const chromeTabsRemovePromise: RemovePromise = (tabId: number): Promise<any> => (
   new Promise(function(resolve, reject) {
     console.log("removing tab", tabId);
-    chrome.tabs.remove(tabId,  () => { console.log("removed");resolve(); });
+    chrome.tabs.remove(tabId,  () => { console.log("removed");resolve([]); });
   })
 );
 
@@ -133,7 +133,7 @@ export const moveSameUrlHost = (
   groupVivaldiTabsPromise: GroupVivaldiTab) => (
   new Promise(function(resolve, reject) {
     if(!config.group.isActivated || !tab.url) {
-      resolve();
+      resolve([]);
       return;
     }
 
@@ -149,7 +149,7 @@ export const moveSameUrlHost = (
         return Promise.resolve()
       }
     })
-    .then( () => resolve())
+    .then( () => resolve([]))
   })
 );
 
@@ -199,7 +199,7 @@ export const removeDuplicates = (
 
   new Promise((resolve) => {
     if(!config.duplicates.isActivated) {
-      resolve();
+      resolve([]);
       return;
     }
 
@@ -213,7 +213,7 @@ export const removeDuplicates = (
         console.log("remove tabs ", tabs)
         return promiseSerial(tabs.map(t => () => removePromise(t.id!)))
       } else {
-        return Promise.resolve()
+        return Promise.resolve([])
       }
     })
     .then(resolve);
@@ -227,7 +227,7 @@ export const trimTabs = (tab: ChromeTab,
   new Promise( (resolve) => {
     
     if(!config.host.isActivated || !tab.url) {
-      resolve();
+      resolve([]);
       return;
     }
 
@@ -247,7 +247,7 @@ export const trimTabs = (tab: ChromeTab,
         console.log("trim tab ", toRemove)
         return promiseSerial(toRemove.map(t => () => removePromise(t.id!)))
       } else {
-        return Promise.resolve()
+        return Promise.resolve([])
       }
     })
     .then(resolve);
