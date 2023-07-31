@@ -12,8 +12,10 @@ export interface RulesConfig {
       maxTabsAllowed: number,
     }
   }
+
+  export type ChromeTab = chrome.tabs.Tab
   
-  interface VivaldiTab extends chrome.tabs.Tab {
+  interface VivaldiTab extends ChromeTab {
     readonly vivExtData: string;
   }
   
@@ -24,8 +26,8 @@ export interface RulesConfig {
  
 export type RemovePromise = (tabId: number) => Promise<any>
 export type UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties | VivaldiUpdateProperties) => Promise<any>
-export type QueryPromise = (query: chrome.tabs.QueryInfo) => Promise<chrome.tabs.Tab[]>
-export type RegroupTabsPromise = (tabs: chrome.tabs.Tab[]) => Promise<chrome.tabs.Tab[]>
+export type QueryPromise = (query: chrome.tabs.QueryInfo) => Promise<ChromeTab[]>
+export type RegroupTabsPromise = (tabs: ChromeTab[]) => Promise<ChromeTab[]>
   
   
   const isVivaldiTab = (object: any): object is VivaldiTab => {
@@ -46,7 +48,7 @@ const promiseSerial = (funcs : Array<() => Promise<any>>) =>
 
 /* Chrome Tabs promise wrappers */
 
-export const chromeTabsMovePromise = (id: number, index: number): Promise<chrome.tabs.Tab[]> => (
+export const chromeTabsMovePromise = (id: number, index: number): Promise<ChromeTab[]> => (
   new Promise(function(resolve, reject) {
     console.log("moving tab to index : ", index);
     chrome.tabs.move(id, { index }, () => resolve());
@@ -67,7 +69,7 @@ const chromeTabsRemovePromise: RemovePromise = (tabId: number): Promise<any> => 
   })
 );
 
-const chromeTabsQueryPromise: QueryPromise = (query: chrome.tabs.QueryInfo): Promise<chrome.tabs.Tab[]> => (
+const chromeTabsQueryPromise: QueryPromise = (query: chrome.tabs.QueryInfo): Promise<ChromeTab[]> => (
   new Promise(function(resolve, reject) {
     console.log("querying tabs ", query);
     chrome.tabs.query(query, resolve);
@@ -76,7 +78,7 @@ const chromeTabsQueryPromise: QueryPromise = (query: chrome.tabs.QueryInfo): Pro
 
 /********************/
 
-export const applyRulesForTab = (tab: chrome.tabs.Tab, config: RulesConfig) => {
+export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
   console.log("apply otto rules for tab", tab);  
   promiseSerial([
     () => removeDuplicates(tab, config, chromeTabsQueryPromise, chromeTabsRemovePromise),
@@ -91,7 +93,7 @@ export const applyRulesForTab = (tab: chrome.tabs.Tab, config: RulesConfig) => {
   ])
 }
 
-export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: number)=> Promise<chrome.tabs.Tab[]>) : RegroupTabsPromise => (tabs: chrome.tabs.Tab[]) => {
+export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: number)=> Promise<ChromeTab[]>) : RegroupTabsPromise => (tabs: ChromeTab[]) => {
   console.log("bla")
   if(tabs.length < 2) {
     console.log("no need to move", tabs.length, "tabs")
@@ -124,7 +126,7 @@ const getQueryToGroup = (url: URL, config: RulesConfig) => {
 }
 
 export const moveSameUrlHost = (
-  tab: chrome.tabs.Tab | VivaldiTab,
+  tab: ChromeTab | VivaldiTab,
   config: RulesConfig,
   queryPromise: QueryPromise,
   regroupTabsPromise: RegroupTabsPromise,
@@ -190,7 +192,7 @@ export const groupVivaldiTabsPromise = (tabs: VivaldiTab[], updatePromise: Updat
 }
 
 export const removeDuplicates = (
-  tab: chrome.tabs.Tab,
+  tab: ChromeTab,
   config: RulesConfig,
   queryPromise: QueryPromise,
   removePromise: RemovePromise) => (
@@ -218,7 +220,7 @@ export const removeDuplicates = (
   })
 );
 
-export const trimTabs = (tab: chrome.tabs.Tab,
+export const trimTabs = (tab: ChromeTab,
   config: RulesConfig,
   queryPromise: QueryPromise,
   removePromise: RemovePromise) : Promise<any> => (

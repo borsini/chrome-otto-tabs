@@ -12,7 +12,8 @@ import {
   moveSameUrlHost,
   RegroupTabsPromise,
   GroupVivaldiTab,
-  regroupTabsPromise
+  regroupTabsPromise,
+  ChromeTab
 } from '../src/tabs_helpers'
 import { expect } from 'chai';
 
@@ -22,7 +23,7 @@ beforeEach(() => {
 
 describe('trimTabs()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -67,7 +68,7 @@ describe('trimTabs()', function () {
   })
 
   it('doesnt do anything with only one tab', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -112,7 +113,7 @@ describe('trimTabs()', function () {
   })
 
   it('doesnt do anything with less than allowed tabs', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -157,7 +158,7 @@ describe('trimTabs()', function () {
   })
 
   it('trims the oldest tabs', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -203,7 +204,7 @@ describe('trimTabs()', function () {
   })
 
   it('trims the oldest tab', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -255,7 +256,7 @@ describe('trimTabs()', function () {
 
 describe('removeDuplicates()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -300,7 +301,7 @@ describe('removeDuplicates()', function () {
   })
 
   it('doesnt do anything if tabs have different urls', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -347,7 +348,7 @@ describe('removeDuplicates()', function () {
   })
 
   it('removes first tabs if tabs have same urls', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -400,7 +401,7 @@ describe('removeDuplicates()', function () {
 
 describe('moveSameUrlHost()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -432,13 +433,13 @@ describe('moveSameUrlHost()', function () {
       return Promise.resolve([])
     }
 
-    const regroupTabsPromise: RegroupTabsPromise = (tabs: chrome.tabs.Tab[]) => {
+    const regroupTabsPromise: RegroupTabsPromise = (tabs: ChromeTab[]) => {
       return Promise.resolve([])
     }
 
     const moveSpy = chai.spy(regroupTabsPromise)
 
-    const groupVivaldiTabs: GroupVivaldiTab = (tabs: chrome.tabs.Tab[]) => {
+    const groupVivaldiTabs: GroupVivaldiTab = (tabs: ChromeTab[]) => {
       return Promise.resolve([])
     }
 
@@ -454,7 +455,7 @@ describe('moveSameUrlHost()', function () {
 
 describe('regroupTabsPromise()', function () {
   it('doesnt do anything if only one tab', () => {
-    const tab: chrome.tabs.Tab = {
+    const tab: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -469,7 +470,7 @@ describe('regroupTabsPromise()', function () {
     }
   
     const movePromise = (id: number, index: number) => {
-      return Promise.resolve<chrome.tabs.Tab[]>([])
+      return Promise.resolve<ChromeTab[]>([])
     }
 
     const moveSpy = chai.spy(movePromise)
@@ -480,7 +481,7 @@ describe('regroupTabsPromise()', function () {
   })
 
   it('regroups tabs', () => {
-    const tab1: chrome.tabs.Tab = {
+    const tab1: ChromeTab = {
       index: 1,
       url: "http://url",
       pinned: false,
@@ -494,7 +495,7 @@ describe('regroupTabsPromise()', function () {
       autoDiscardable: false
     }
 
-    const tab2: chrome.tabs.Tab = {
+    const tab2: ChromeTab = {
       index: 4,
       url: "http://url",
       pinned: false,
@@ -509,7 +510,7 @@ describe('regroupTabsPromise()', function () {
     }
   
     const movePromise = () => {
-      return Promise.resolve<chrome.tabs.Tab[]>([])
+      return Promise.resolve<ChromeTab[]>([])
     }
 
     const moveSpy = chai.spy(movePromise)
