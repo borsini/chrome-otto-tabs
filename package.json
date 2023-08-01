@@ -23,6 +23,6 @@
     "@types/filesystem": "Needs to be declared otherwise typescript and chrome types conflict https://stackoverflow.com/questions/74206705/typescript-upgrade-and-chrome-types-conflict"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.73"
+    "@types/chrome": "^0.0.242"
   }
 }

@@ -34,7 +34,8 @@ describe('trimTabs()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -79,7 +80,8 @@ describe('trimTabs()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -124,7 +126,8 @@ describe('trimTabs()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -169,7 +172,8 @@ describe('trimTabs()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -215,7 +219,8 @@ describe('trimTabs()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -267,7 +272,8 @@ describe('removeDuplicates()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -312,7 +318,8 @@ describe('removeDuplicates()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -329,7 +336,7 @@ describe('removeDuplicates()', function () {
       }
     }
 
-    const tab2 = { ...tab, id: 321, url: "http://lru"}
+    const tab2 = { ...tab, id: 321, url: "http://lru" }
 
     const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
       return Promise.resolve([tab, tab2])
@@ -359,7 +366,8 @@ describe('removeDuplicates()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -376,9 +384,9 @@ describe('removeDuplicates()', function () {
       }
     }
 
-    const tab2 = { ...tab, id: 1, url: "http://url"}
-    const tab3 = { ...tab, id: 2, url: "http://lru"}
-    const tab4 = { ...tab, id: 3, url: "http://url"}
+    const tab2 = { ...tab, id: 1, url: "http://url" }
+    const tab3 = { ...tab, id: 2, url: "http://lru" }
+    const tab4 = { ...tab, id: 3, url: "http://url" }
 
 
     const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
@@ -412,7 +420,8 @@ describe('moveSameUrlHost()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const conf: RulesConfig = {
@@ -466,9 +475,10 @@ describe('regroupTabsPromise()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
-  
+
     const movePromise = (id: number, index: number) => {
       return Promise.resolve<ChromeTab[]>([])
     }
@@ -492,7 +502,8 @@ describe('regroupTabsPromise()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
 
     const tab2: ChromeTab = {
@@ -506,9 +517,10 @@ describe('regroupTabsPromise()', function () {
       incognito: false,
       selected: false,
       discarded: false,
-      autoDiscardable: false
+      autoDiscardable: false,
+      groupId: -1,
     }
-  
+
     const movePromise = () => {
       return Promise.resolve<ChromeTab[]>([])
     }
