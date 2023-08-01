@@ -13,7 +13,8 @@ import {
   RegroupTabsPromise,
   GroupVivaldiTab,
   regroupTabsPromise,
-  ChromeTab
+  ChromeTab,
+  GroupChromeTab
 } from '../src/tabs_helpers'
 import { expect } from 'chai';
 
@@ -452,9 +453,22 @@ describe('moveSameUrlHost()', function () {
       return Promise.resolve([])
     }
 
-    const vivaldiSpy = chai.spy(groupVivaldiTabs)
+    const groupChromeTabs: GroupChromeTab = (tabs: ChromeTab[]) => {
+      return Promise.resolve([])
+    }
 
-    return moveSameUrlHost(tab, conf, queryPromise, moveSpy, vivaldiSpy).then(() => {
+    const vivaldiSpy = chai.spy(groupVivaldiTabs)
+    const chromeSpy = chai.spy(groupChromeTabs)
+
+    return moveSameUrlHost(
+      tab,
+      conf,
+      queryPromise,
+      moveSpy,
+      chromeSpy,
+      vivaldiSpy,
+
+    ).then(() => {
       expect(moveSpy).not.to.have.been.called()
       expect(vivaldiSpy).not.to.have.been.called()
     })

@@ -26,6 +26,7 @@ export interface RulesConfig {
  
 export type RemovePromise = (tabId: number) => Promise<any>
 export type UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties | VivaldiUpdateProperties) => Promise<any>
+export type GroupPromise = (options: chrome.tabs.GroupOptions) => Promise<any>
 export type QueryPromise = (query: chrome.tabs.QueryInfo) => Promise<ChromeTab[]>
 export type RegroupTabsPromise = (tabs: ChromeTab[]) => Promise<ChromeTab[]>
   
@@ -62,6 +63,13 @@ const chromeTabsUpdatePromise: UpdatePromise = (tabId: number, data: chrome.tabs
   })
 );
 
+const chromeTabsGroupPromise: GroupPromise = (options: chrome.tabs.GroupOptions): Promise<any> => (
+  new Promise(function(resolve, reject) {
+    console.log("grouping tabs", options);
+    chrome.tabs.group(options,  (t) => resolve([]));
+  })
+);
+
 const chromeTabsRemovePromise: RemovePromise = (tabId: number): Promise<any> => (
   new Promise(function(resolve, reject) {
     console.log("removing tab", tabId);
@@ -88,13 +96,14 @@ export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
         config,
         chromeTabsQueryPromise,
         regroupTabsPromise(chromeTabsMovePromise),
-        moveVivaldi(chromeTabsUpdatePromise, uuidv4)
+        groupChrome(),
+        groupVivaldi(chromeTabsUpdatePromise, uuidv4),
         ),
-  ])
+  ]).catch(err => console.log(err))
 }
 
 export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: number)=> Promise<ChromeTab[]>) : RegroupTabsPromise => (tabs: ChromeTab[]) => {
-  console.log("bla")
+  
   if(tabs.length < 2) {
     console.log("no need to move", tabs.length, "tabs")
     return Promise.resolve(tabs)
@@ -110,9 +119,14 @@ export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: nu
 }
 
 
-const moveVivaldi = (updatePromise: UpdatePromise, getUUID: () => string): GroupVivaldiTab => 
+const groupVivaldi = (updatePromise: UpdatePromise, getUUID: () => string): GroupVivaldiTab => 
 (tabs: VivaldiTab[]) => {
   return groupVivaldiTabsPromise(tabs, updatePromise, uuidv4)
+}
+
+const groupChrome = (): GroupChromeTab =>
+(tabs: ChromeTab[]) => {
+  return groupChromeTabsPromise(tabs)
 }
 
 const getQueryToGroup = (url: URL, config: RulesConfig) => {
@@ -130,6 +144,7 @@ export const moveSameUrlHost = (
   config: RulesConfig,
   queryPromise: QueryPromise,
   regroupTabsPromise: RegroupTabsPromise,
+  groupChromeTabsPromise: GroupChromeTab,
   groupVivaldiTabsPromise: GroupVivaldiTab) => (
   new Promise(function(resolve, reject) {
     if(!config.group.isActivated || !tab.url) {
@@ -146,12 +161,35 @@ export const moveSameUrlHost = (
       if(isVivaldiTab(tab)) { //Vivaldi stacking feature is supported
         return groupVivaldiTabsPromise(tabs as VivaldiTab[])
       } else {
-        return Promise.resolve()
+        return groupChromeTabsPromise(tabs)
       }
     })
     .then( () => resolve([]))
   })
 );
+
+export type GroupChromeTab = (tabs: ChromeTab[]) => Promise<any>
+
+export const groupChromeTabsPromise = (tabs: ChromeTab[]) => {
+  console.log("group chrome tabs...")
+
+  var groupIdToUse = tabs.at(0)?.groupId
+  if(groupIdToUse == -1) groupIdToUse = undefined
+
+    console.log("group id to use", groupIdToUse)
+
+    const tabIds = tabs
+    .map( t => t.id )
+    .filter((id): id is number => !!id)
+
+
+    console.log("tabIds: ", tabIds)
+
+    return chromeTabsGroupPromise({
+      tabIds: tabIds,
+      groupId: groupIdToUse,
+    })
+}
 
 export type GroupVivaldiTab = (tabs: VivaldiTab[]) => Promise<any>
 
@@ -179,7 +217,7 @@ export const groupVivaldiTabsPromise = (tabs: VivaldiTab[], updatePromise: Updat
     groupIdToUse = existingGroupId ? existingGroupId : getUUID()
     console.log("group id to use", groupIdToUse)
   } else {
-    console.log("only one tab, remove it's group id")
+    console.log("only one tab, remove its group id")
   }
 
   const updatePromises = Object.keys(tabsToExtData).map(t => parseInt(t)).map((tabId => {
