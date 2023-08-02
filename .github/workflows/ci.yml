@@ -1,0 +1,29 @@
+name: CI
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Run test
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: test
+
+      - name: Run build
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build

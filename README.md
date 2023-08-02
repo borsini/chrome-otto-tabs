@@ -1,4 +1,4 @@
-# Otto Tabs
+# Otto Tabs [![CI](https://github.com/borsini/chrome-otto-tabs/actions/workflows/ci.yml/badge.svg)](https://github.com/borsini/chrome-otto-tabs/actions/workflows/ci.yml)
 
 >Smart tabs management
 
