@@ -173,22 +173,25 @@ export type GroupChromeTab = (tabs: ChromeTab[]) => Promise<any>
 export const groupChromeTabsPromise = (tabs: ChromeTab[]) => {
   console.log("group chrome tabs...")
 
-  var groupIdToUse = tabs.at(0)?.groupId
-  if(groupIdToUse == -1) groupIdToUse = undefined
+  if(tabs.length == 1) return Promise.resolve()
 
-    console.log("group id to use", groupIdToUse)
+  const groupIdToUse : number | undefined =  tabs
+    .map(d => d.groupId)
+    .find(g => g !== undefined && g != -1)
 
-    const tabIds = tabs
-    .map( t => t.id )
-    .filter((id): id is number => !!id)
+  console.log("group id to use", groupIdToUse)
+
+  const tabIds = tabs
+  .map( t => t.id )
+  .filter((id): id is number => !!id)
 
 
-    console.log("tabIds: ", tabIds)
+  console.log("tabIds: ", tabIds)
 
-    return chromeTabsGroupPromise({
-      tabIds: tabIds,
-      groupId: groupIdToUse,
-    })
+  return chromeTabsGroupPromise({
+    tabIds: tabIds,
+    groupId: groupIdToUse,
+  })
 }
 
 export type GroupVivaldiTab = (tabs: VivaldiTab[]) => Promise<any>
