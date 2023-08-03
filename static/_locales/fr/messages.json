@@ -1,0 +1,20 @@
+{
+  "manifest_description": {
+    "message": "Gestion automatique de vos onglets"
+  },
+  "popup_options_duplicates_description": {
+    "message": "Supprimer les onglets identiques"
+  },
+  "popup_options_group_description": {
+    "message": "Regrouper les tabs selon"
+  },
+  "popup_options_group_option_host": {
+    "message": "leur host uniquement"
+  },
+  "popup_options_group_option_subdomain": {
+    "message": "leur host et leurs sous-domaines"
+  },
+  "popup_options_openlimit_description": {
+    "message": "Supprimer les onglets ayant le même host (si plus de 5)"
+  }
+}
