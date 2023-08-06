@@ -10,10 +10,10 @@
   },
   "scriptsComments": {
     "archive": "Runs [test], [clean_build], [build], [move_static] and finally [zip_build]",
-    "zip_build": "Package all files in the build/ folder to a single zip file. Uses to publish the extension on the Chrome Web Store https://chrome.google.com/webstore/detail/otto-tabs/pjgajilkdijnbfmglfbpnenocpajmdlb",
-    "build": "Compile all typescript files according to the tsconfig.json configuration file",
-    "clean_build": "Remove all files in the build/ folder",
-    "move_static": "Copy all static files from static/ to build/ folder",
+    "zip_build": "Packages all files in the build/ folder to a single zip file. Used to publish the extension on the Chrome Web Store https://chrome.google.com/webstore/detail/otto-tabs/pjgajilkdijnbfmglfbpnenocpajmdlb",
+    "build": "Compiles all typescript files according to the tsconfig.json configuration file",
+    "clean_build": "Removes all files in the build/ folder",
+    "move_static": "Copies all static files from static/ to build/ folder",
     "test": "Runs all tests located in the test/ folder"
   },
   "devDependencies": {
