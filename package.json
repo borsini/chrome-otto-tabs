@@ -2,7 +2,7 @@
   "license": "MIT",
   "scripts": {
     "archive": "yarn test && yarn clean_build && yarn build && yarn move_static && yarn zip_build",
-    "zip_build": "cd build;zip extension.zip *",
+    "zip_build": "cd build;zip -r extension.zip *",
     "build": "tsc",
     "clean_build": "rm -rf build",
     "move_static": "cp -R static/ build/",
