@@ -10,7 +10,6 @@ It needs regular manual intervention to keep a clean browser. That is why I crea
 ## Compatibility
 
 Otto Tabs works with all chromium based browsers ([Chrome](https://www.google.fr/chrome), [Opera](https://www.opera.com), [Vivaldi](https://vivaldi.com)) that support extensions.  
-Check this link to install with Opera : https://addons.opera.com/en/extensions/details/install-chrome-extensions/
 
 ## Features
 
