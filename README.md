@@ -9,7 +9,9 @@ It needs regular manual intervention to keep a clean browser. That is why I crea
 
 ## Compatibility
 
-Otto Tabs works with all chromium based browsers ([Chrome](https://www.google.fr/chrome), [Opera](https://www.opera.com), [Vivaldi](https://vivaldi.com)) that support extensions.  
+Otto Tabs works with all chromium based browsers that implement the [chrome.tabs api](https://developer.chrome.com/docs/extensions/reference/api/tabs).
+
+Tested on Chrome 124.0.6367.119, Opera 109.0.5097.68, Brave 1.65.126
 
 ## Features
 
@@ -17,14 +19,9 @@ Those feature can be toggled on and off. By default the first two are enabled.
 
 ### Group/stack tabs automatically
 
-Tabs from same domain are grouped next to each other or stacked (Vivaldi).
+Tabs from same domain are grouped next to each other.
 
-Behavior in Chrome
 ![](pictures/grouped.gif)
-
-
-Behavior in Vivaldi
-![](pictures/stacked.gif)
 
 ### Remove duplicate tabs
 
@@ -48,6 +45,6 @@ Feel free to fill a ticket [here](https://github.com/Benlenem/chrome-otto-tabs/i
 * Download or clone the project
 * Using a terminal go to the project root folder
 * Type `yarn archive`. This will execute the unit tests and create a `build` folder. This folder contains all the extension files.
-* Go to either vivaldi://extensions/ or chrome://extensions/ according to your browser
+* Go to either [chrome://extensions](chrome://extensions), [opera://extensions](opera://extensions) or [brave://extensions](brave://extensions) according to your browser
 * Install the extension as unpacked by selecting the `build` folder
-
+dz

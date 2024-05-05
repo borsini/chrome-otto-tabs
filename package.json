@@ -33,6 +33,6 @@
     "@types/node": "Peer dependency of ts-node"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.242"
+    "@types/chrome": "^0.0.267"
   }
 }

@@ -11,7 +11,6 @@ import {
   removeDuplicates,
   moveSameUrlHost,
   RegroupTabsPromise,
-  GroupVivaldiTab,
   regroupTabsPromise,
   ChromeTab,
   GroupChromeTab
@@ -449,15 +448,10 @@ describe('moveSameUrlHost()', function () {
 
     const moveSpy = chai.spy(regroupTabsPromise)
 
-    const groupVivaldiTabs: GroupVivaldiTab = (tabs: ChromeTab[]) => {
-      return Promise.resolve([])
-    }
-
     const groupChromeTabs: GroupChromeTab = (tabs: ChromeTab[]) => {
       return Promise.resolve([])
     }
 
-    const vivaldiSpy = chai.spy(groupVivaldiTabs)
     const chromeSpy = chai.spy(groupChromeTabs)
 
     return moveSameUrlHost(
@@ -466,11 +460,9 @@ describe('moveSameUrlHost()', function () {
       queryPromise,
       moveSpy,
       chromeSpy,
-      vivaldiSpy,
 
     ).then(() => {
       expect(moveSpy).not.to.have.been.called()
-      expect(vivaldiSpy).not.to.have.been.called()
     })
 
   })
