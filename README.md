@@ -44,7 +44,8 @@ Feel free to fill a ticket [here](https://github.com/Benlenem/chrome-otto-tabs/i
 * Install [yarn](https://classic.yarnpkg.com/en/docs/install/)
 * Download or clone the project
 * Using a terminal go to the project root folder
-* Type `yarn archive`. This will execute the unit tests and create a `build` folder. This folder contains all the extension files.
+* Run `yarn install`. This will fetch the project dependencies.
+* Run `yarn archive`. This will execute the unit tests and create a `build` folder. This folder contains all the extension files.
 * Go to either [chrome://extensions](chrome://extensions), [opera://extensions](opera://extensions) or [brave://extensions](brave://extensions) according to your browser
 * Install the extension as unpacked by selecting the `build` folder
 dz
