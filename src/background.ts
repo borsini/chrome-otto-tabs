@@ -12,7 +12,7 @@ var config: RulesConfig = {
     type: "FULL_DOMAIN"
   },
   host: {
-    isActivated: true,
+    isActivated: false,
     maxTabsAllowed: 5,
   }
 }
