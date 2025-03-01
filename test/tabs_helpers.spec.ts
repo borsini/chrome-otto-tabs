@@ -52,17 +52,13 @@ describe('trimTabs()', function () {
       }
     }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([])
-    }
-
     const removePromise: RemovePromise = (id: number) => {
       return Promise.resolve()
     }
 
     const removeSpy = chai.spy(removePromise)
 
-    return trimTabs(tab, conf, queryPromise, removeSpy).then(() => {
+    return trimTabs(tab, conf, noOpQueryPromise, removeSpy).then(() => {
       expect(removeSpy).not.to.have.been.called()
     })
 
@@ -98,17 +94,13 @@ describe('trimTabs()', function () {
       }
     }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([])
-    }
-
     const removePromise: RemovePromise = (id: number) => {
       return Promise.resolve()
     }
 
     const removeSpy = chai.spy(removePromise)
 
-    return trimTabs(tab, conf, queryPromise, removeSpy).then(() => {
+    return trimTabs(tab, conf, noOpQueryPromise, removeSpy).then(() => {
       expect(removeSpy).not.to.have.been.called()
     })
 
@@ -144,10 +136,6 @@ describe('trimTabs()', function () {
       }
     }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([tab])
-    }
-
     const removePromise: RemovePromise = (id: number) => {
       return Promise.resolve()
     }
@@ -155,7 +143,7 @@ describe('trimTabs()', function () {
 
     const removeSpy = chai.spy(removePromise)
 
-    return trimTabs(tab, conf, queryPromise, removeSpy).then(() => {
+    return trimTabs(tab, conf, noOpQueryPromise, removeSpy).then(() => {
       expect(removeSpy).not.to.have.been.called()
     })
   })
@@ -192,7 +180,7 @@ describe('trimTabs()', function () {
 
     const t2 = { ...tab, id: 2 }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+    const queryPromise: QueryPromise = (url?: string) => {
       return Promise.resolve([t2])
     }
 
@@ -241,7 +229,7 @@ describe('trimTabs()', function () {
     const t3 = { ...tab, id: 3 }
     const t4 = { ...tab, id: 4 }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+    const queryPromise: QueryPromise = (url?: string) => {
       return Promise.resolve([t2, t3, t4])
     }
 
@@ -290,17 +278,13 @@ describe('removeDuplicates()', function () {
       }
     }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([])
-    }
-
     const removePromise: RemovePromise = (id: number) => {
       return Promise.resolve()
     }
 
     const removeSpy = chai.spy(removePromise)
 
-    return removeDuplicates(tab, conf, queryPromise, removeSpy).then(() => {
+    return removeDuplicates(tab, conf, noOpQueryPromise, removeSpy).then(() => {
       expect(removeSpy).not.to.have.been.called()
     })
 
@@ -338,7 +322,7 @@ describe('removeDuplicates()', function () {
 
     const tab2 = { ...tab, id: 321, url: "http://lru" }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+    const queryPromise: QueryPromise = (url?: string) => {
       return Promise.resolve([tab, tab2])
     }
 
@@ -389,7 +373,7 @@ describe('removeDuplicates()', function () {
     const tab4 = { ...tab, id: 3, url: "http://url" }
 
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
+    const queryPromise: QueryPromise = (url?: string) => {
       return Promise.resolve([tab, tab2, tab3, tab4])
     }
 
@@ -438,10 +422,6 @@ describe('moveSameUrlHost()', function () {
       }
     }
 
-    const queryPromise: QueryPromise = (i: chrome.tabs.QueryInfo) => {
-      return Promise.resolve([])
-    }
-
     const regroupTabsPromise: RegroupTabsPromise = (tabs: ChromeTab[]) => {
       return Promise.resolve([])
     }
@@ -457,7 +437,7 @@ describe('moveSameUrlHost()', function () {
     return moveSameUrlHost(
       tab,
       conf,
-      queryPromise,
+      noOpQueryPromise,
       moveSpy,
       chromeSpy,
 
@@ -539,3 +519,7 @@ describe('regroupTabsPromise()', function () {
     })
   })
 })
+
+const noOpQueryPromise: QueryPromise = (url?: string) => {
+  return Promise.resolve([])
+}

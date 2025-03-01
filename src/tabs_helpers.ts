@@ -19,7 +19,7 @@ export interface RulesConfig {
 export type RemovePromise = (tabId: number) => Promise<any>
 export type UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties) => Promise<any>
 export type GroupPromise = (options: chrome.tabs.GroupOptions) => Promise<any>
-export type QueryPromise = (query: chrome.tabs.QueryInfo) => Promise<ChromeTab[]>
+export type QueryPromise = (url?: string) => Promise<ChromeTab[]>
 export type RegroupTabsPromise = (tabs: ChromeTab[]) => Promise<ChromeTab[]>
   
 const promiseSerial = (funcs : Array<() => Promise<any>>) =>
@@ -57,17 +57,23 @@ const chromeTabsRemovePromise: RemovePromise = (tabId: number): Promise<any> => 
   })
 );
 
-const chromeTabsQueryPromise: QueryPromise = (query: chrome.tabs.QueryInfo): Promise<ChromeTab[]> => (
-  new Promise(function(resolve, reject) {
-    console.log("querying tabs ", query);
-    chrome.tabs.query(query, resolve);
-  })
-);
-
 /********************/
 
 export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
-  console.log("apply otto rules for tab", tab);  
+  console.log("apply otto rules for tab", tab)
+  
+  const chromeTabsQueryPromise: QueryPromise = (url?: string): Promise<ChromeTab[]> => (
+    new Promise(function(resolve, reject) {
+      const query = {
+        url,
+        currentWindow: true,
+        pinned: false,
+      }
+      console.log("querying tabs ", query);
+      chrome.tabs.query(query, resolve);
+    })
+  );
+
   promiseSerial([
     () => removeDuplicates(tab, config, chromeTabsQueryPromise, chromeTabsRemovePromise),
     () => trimTabs(tab, config, chromeTabsQueryPromise, chromeTabsRemovePromise),
@@ -128,7 +134,7 @@ export const moveSameUrlHost = (
     console.log("Group tabs...")
 
     const hostQuery = getQueryToGroup(new URL(tab.url), config);
-    queryPromise({url: hostQuery, currentWindow: true, pinned: false})
+    queryPromise(hostQuery)
     .then(regroupTabsPromise)
     .then( tabs => groupChromeTabsPromise(tabs))
     .then( () => resolve([]))
@@ -175,7 +181,7 @@ export const removeDuplicates = (
 
     console.log("Removing duplicates...")
 
-    queryPromise({ currentWindow: true, pinned: false })
+    queryPromise()
     .then(allTabs => {
       const tabs = allTabs.filter( t => t.id !== undefined && t.url == tab.url && t.id != tab.id)
       console.log(tabs.length, "identical tabs to tab id ", tab.id, " : ", tabs)
@@ -204,9 +210,9 @@ export const trimTabs = (tab: ChromeTab,
     console.log("Trimming tabs...")
 
     const url = new URL(tab.url);
-    var hostQuery = url.origin + "/*";
-
-    queryPromise({url: hostQuery, currentWindow: true, pinned: false})
+    var hostUrl = url.origin + "/*";
+    
+    queryPromise(hostUrl)
     .then( tabs => {
       console.log(tabs.length, "tabs with same host")
       if(tabs.length > config.host.maxTabsAllowed) {
