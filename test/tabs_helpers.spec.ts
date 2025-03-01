@@ -23,20 +23,7 @@ beforeEach(() => {
 
 describe('trimTabs()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -62,20 +49,7 @@ describe('trimTabs()', function () {
   })
 
   it('doesnt do anything with only one tab', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -105,20 +79,7 @@ describe('trimTabs()', function () {
   })
 
   it('doesnt do anything with less than allowed tabs', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -148,20 +109,7 @@ describe('trimTabs()', function () {
   })
 
   it('trims the oldest tabs', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 1,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -196,21 +144,6 @@ describe('trimTabs()', function () {
   })
 
   it('trims the oldest tab', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 1,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
-
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
       duplicates: {
@@ -226,6 +159,7 @@ describe('trimTabs()', function () {
       }
     }
 
+    const tab = fakeTab()
     const t2 = { ...tab, id: 2 }
     const t3 = { ...tab, id: 3 }
     const t4 = { ...tab, id: 4 }
@@ -250,20 +184,7 @@ describe('trimTabs()', function () {
 
 describe('removeDuplicates()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -286,20 +207,7 @@ describe('removeDuplicates()', function () {
   })
 
   it('doesnt do anything if tabs have different urls', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
@@ -331,21 +239,6 @@ describe('removeDuplicates()', function () {
   })
 
   it('removes first tabs if tabs have same urls', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 4,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
-
     const conf: RulesConfig = {
       ...fakeRulesConfig(),
       duplicates: {
@@ -356,7 +249,8 @@ describe('removeDuplicates()', function () {
         type: "FULL_DOMAIN"
       },
     }
-
+    
+    const tab: ChromeTab = fakeTab()
     const tab2 = { ...tab, id: 1, url: "http://url" }
     const tab3 = { ...tab, id: 2, url: "http://lru" }
     const tab4 = { ...tab, id: 3, url: "http://url" }
@@ -382,20 +276,7 @@ describe('removeDuplicates()', function () {
 
 describe('moveSameUrlHost()', function () {
   it('doesnt do anything if config disabled', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const conf: RulesConfig = fakeRulesConfig()
 
@@ -427,20 +308,7 @@ describe('moveSameUrlHost()', function () {
 
 describe('regroupTabsPromise()', function () {
   it('doesnt do anything if only one tab', () => {
-    const tab: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
-      id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
-    }
+    const tab: ChromeTab = fakeTab()
 
     const movePromise = (id: number, index: number) => {
       return Promise.resolve<ChromeTab[]>([])
@@ -455,33 +323,15 @@ describe('regroupTabsPromise()', function () {
 
   it('regroups tabs', () => {
     const tab1: ChromeTab = {
-      index: 1,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
+      ...fakeTab(),
       id: 123,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
+      index: 1,
     }
 
     const tab2: ChromeTab = {
-      index: 4,
-      url: "http://url",
-      pinned: false,
-      highlighted: false,
-      windowId: 1,
-      active: true,
+      ...fakeTab(),
       id: 321,
-      incognito: false,
-      selected: false,
-      discarded: false,
-      autoDiscardable: false,
-      groupId: -1,
+      index: 4,
     }
 
     const movePromise = () => {
@@ -514,5 +364,22 @@ function fakeRulesConfig(): RulesConfig {
       isActivated: false,
       maxTabsAllowed: 5,
     },
+  }
+}
+
+function fakeTab(): chrome.tabs.Tab {
+  return {
+    index: 1,
+    url: "http://url",
+    pinned: false,
+    highlighted: false,
+    windowId: 1,
+    active: true,
+    id: 123,
+    incognito: false,
+    selected: false,
+    discarded: false,
+    autoDiscardable: false,
+    groupId: -1,
   }
 }
