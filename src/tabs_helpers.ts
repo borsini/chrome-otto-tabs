@@ -36,13 +36,6 @@ export const chromeTabsMovePromise = (id: number, index: number): Promise<Chrome
   })
 );
 
-const chromeTabsUpdatePromise: UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties): Promise<any> => (
-  new Promise(function(resolve, reject) {
-    console.log("updating tab", tabId, data);
-    chrome.tabs.update(tabId, data, (t) => resolve([]));
-  })
-);
-
 const chromeTabsGroupPromise: GroupPromise = (options: chrome.tabs.GroupOptions): Promise<any> => (
   new Promise(function(resolve, reject) {
     console.log("grouping tabs", options);
