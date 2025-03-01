@@ -39,6 +39,7 @@ describe('trimTabs()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -46,10 +47,6 @@ describe('trimTabs()', function () {
         isActivated: true,
         type: "FULL_DOMAIN"
       },
-      host: {
-        isActivated: false,
-        maxTabsAllowed: 5,
-      }
     }
 
     const removePromise: RemovePromise = (id: number) => {
@@ -81,6 +78,7 @@ describe('trimTabs()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -123,6 +121,7 @@ describe('trimTabs()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -165,6 +164,7 @@ describe('trimTabs()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -212,6 +212,7 @@ describe('trimTabs()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -265,17 +266,11 @@ describe('removeDuplicates()', function () {
     }
 
     const conf: RulesConfig = {
-      duplicates: {
-        isActivated: false,
-      },
+      ...fakeRulesConfig(),
       group: {
         isActivated: true,
         type: "FULL_DOMAIN"
-      },
-      host: {
-        isActivated: false,
-        maxTabsAllowed: 5,
-      }
+      },  
     }
 
     const removePromise: RemovePromise = (id: number) => {
@@ -307,6 +302,7 @@ describe('removeDuplicates()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -314,10 +310,6 @@ describe('removeDuplicates()', function () {
         isActivated: true,
         type: "FULL_DOMAIN"
       },
-      host: {
-        isActivated: false,
-        maxTabsAllowed: 5,
-      }
     }
 
     const tab2 = { ...tab, id: 321, url: "http://lru" }
@@ -355,6 +347,7 @@ describe('removeDuplicates()', function () {
     }
 
     const conf: RulesConfig = {
+      ...fakeRulesConfig(),
       duplicates: {
         isActivated: true,
       },
@@ -362,10 +355,6 @@ describe('removeDuplicates()', function () {
         isActivated: true,
         type: "FULL_DOMAIN"
       },
-      host: {
-        isActivated: false,
-        maxTabsAllowed: 5,
-      }
     }
 
     const tab2 = { ...tab, id: 1, url: "http://url" }
@@ -408,19 +397,7 @@ describe('moveSameUrlHost()', function () {
       groupId: -1,
     }
 
-    const conf: RulesConfig = {
-      duplicates: {
-        isActivated: false,
-      },
-      group: {
-        isActivated: false,
-        type: "FULL_DOMAIN"
-      },
-      host: {
-        isActivated: false,
-        maxTabsAllowed: 5,
-      }
-    }
+    const conf: RulesConfig = fakeRulesConfig()
 
     const regroupTabsPromise: RegroupTabsPromise = (tabs: ChromeTab[]) => {
       return Promise.resolve([])
@@ -522,4 +499,20 @@ describe('regroupTabsPromise()', function () {
 
 const noOpQueryPromise: QueryPromise = (url?: string) => {
   return Promise.resolve([])
+}
+
+function fakeRulesConfig(): RulesConfig {
+  return {
+    duplicates: {
+      isActivated: false,
+    },
+    group: {
+      isActivated: false,
+      type: "FULL_DOMAIN"
+    },
+    host: {
+      isActivated: false,
+      maxTabsAllowed: 5,
+    },
+  }
 }
