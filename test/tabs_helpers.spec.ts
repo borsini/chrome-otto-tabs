@@ -351,6 +351,7 @@ function fakeRulesConfig(): RulesConfig {
       isActivated: false,
       maxTabsAllowed: 5,
     },
+    windowBehavior: "SPLIT",
   };
 }
 

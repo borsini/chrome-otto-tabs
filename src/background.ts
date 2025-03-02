@@ -12,6 +12,7 @@ var config: RulesConfig = {
     isActivated: false,
     maxTabsAllowed: 5,
   },
+  windowBehavior: "UNIFIED",
 };
 
 chrome.runtime.onMessage.addListener(function (message, _, sendResponse) {

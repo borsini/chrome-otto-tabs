@@ -5,6 +5,9 @@ function $$(id: string) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  var current_window_only = $$(
+    "input[name=current_window_only]",
+  ) as HTMLInputElement;
   var duplicates = $$("input[name=duplicates]") as HTMLInputElement;
   var group = $$("input[name=group]") as HTMLInputElement;
   var group_domain = $$("#group_domain") as HTMLSelectElement;
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       function (config: RulesConfig) {
         console.log("display configuration", config);
 
+        current_window_only.checked = config.windowBehavior === "SPLIT";
         duplicates.checked = config.duplicates.isActivated;
         group.checked = config.group.isActivated;
         group_domain.options[
@@ -52,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
         isActivated: host.checked,
         maxTabsAllowed: 5,
       },
+      windowBehavior: current_window_only.checked ? "SPLIT" : "UNIFIED",
     };
     chrome.runtime.sendMessage("", conf);
   };

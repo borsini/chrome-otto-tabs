@@ -17,5 +17,8 @@
   },
   "popup_options_openlimit_description": {
     "message": "Remove tabs with same host (if more than 5)"
+  },
+  "popup_options_current_window_only_description": {
+    "message": "Treat each window separately"
   }
 }

@@ -16,5 +16,8 @@
   },
   "popup_options_openlimit_description": {
     "message": "Supprimer les onglets ayant le même host (si plus de 5)"
+  },
+  "popup_options_current_window_only_description": {
+    "message": "Gérer chaque fenêtre séparément"
   }
 }

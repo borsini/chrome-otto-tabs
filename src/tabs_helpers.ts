@@ -10,6 +10,7 @@ export interface RulesConfig {
     isActivated: boolean;
     maxTabsAllowed: number;
   };
+  windowBehavior: "SPLIT" | "UNIFIED";
 }
 
 export type ChromeTab = chrome.tabs.Tab;
@@ -72,7 +73,7 @@ export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
     new Promise(function (resolve, reject) {
       const query = {
         url,
-        currentWindow: true,
+        currentWindow: config.windowBehavior == "SPLIT" ? true : undefined,
         pinned: false,
       };
       console.log("querying tabs ", query);
