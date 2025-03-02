@@ -10,8 +10,8 @@ import {
   trimTabs,
   removeDuplicates,
   moveSameUrlHost,
-  RegroupTabsPromise,
-  regroupTabsPromise,
+  MoveTabsPromise,
+  moveTabsPromise,
   ChromeTab,
   GroupChromeTab
 } from '../src/tabs_helpers'
@@ -280,9 +280,7 @@ describe('moveSameUrlHost()', function () {
 
     const conf: RulesConfig = fakeRulesConfig()
 
-    const regroupTabsPromise: RegroupTabsPromise = (tabs: ChromeTab[]) => {
-      return Promise.resolve([])
-    }
+    const regroupTabsPromise: MoveTabsPromise = noOpMovePromise
 
     const moveSpy = chai.spy(regroupTabsPromise)
 
@@ -316,7 +314,7 @@ describe('regroupTabsPromise()', function () {
 
     const moveSpy = chai.spy(movePromise)
 
-    return regroupTabsPromise(movePromise)([tab]).then(() => {
+    return moveTabsPromise(movePromise)([tab]).then(() => {
       expect(moveSpy).not.to.have.been.called()
     })
   })
@@ -340,16 +338,15 @@ describe('regroupTabsPromise()', function () {
 
     const moveSpy = chai.spy(movePromise)
 
-    return regroupTabsPromise(moveSpy)([tab1, tab2]).then(() => {
+    return moveTabsPromise(moveSpy)([tab1, tab2]).then(() => {
       expect(moveSpy).to.have.been.called.with(123, 1)
       expect(moveSpy).to.have.been.called.with(321, 2)
     })
   })
 })
 
-const noOpQueryPromise: QueryPromise = (url?: string) => {
-  return Promise.resolve([])
-}
+const noOpQueryPromise: QueryPromise = () => Promise.resolve([])
+const noOpMovePromise: MoveTabsPromise = () => Promise.resolve([])
 
 function fakeRulesConfig(): RulesConfig {
   return {

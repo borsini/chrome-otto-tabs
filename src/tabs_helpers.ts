@@ -20,7 +20,7 @@ export type RemovePromise = (tabId: number) => Promise<any>
 export type UpdatePromise = (tabId: number, data: chrome.tabs.UpdateProperties) => Promise<any>
 export type GroupPromise = (options: chrome.tabs.GroupOptions) => Promise<any>
 export type QueryPromise = (url?: string) => Promise<ChromeTab[]>
-export type RegroupTabsPromise = (tabs: ChromeTab[]) => Promise<ChromeTab[]>
+export type MoveTabsPromise = (tabs: ChromeTab[]) => Promise<ChromeTab[]>
   
 const promiseSerial = (funcs : Array<() => Promise<any>>) =>
   funcs.reduce((promise, func) =>
@@ -29,10 +29,10 @@ const promiseSerial = (funcs : Array<() => Promise<any>>) =>
 
 /* Chrome Tabs promise wrappers */
 
-export const chromeTabsMovePromise = (id: number, index: number): Promise<ChromeTab[]> => (
+export const chromeTabsMovePromise = (tabId: number, windowId: number, index: number): Promise<ChromeTab[]> => (
   new Promise(function(resolve, reject) {
     console.log("moving tab to index : ", index);
-    chrome.tabs.move(id, { index }, () => resolve([]));
+    chrome.tabs.move(tabId, { index, windowId }, () => resolve([]));
   })
 );
 
@@ -63,7 +63,11 @@ export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
         pinned: false,
       }
       console.log("querying tabs ", query);
-      chrome.tabs.query(query, resolve);
+      chrome.tabs.query(query, (a) => {
+        console.log("tabs found: ", a);
+        resolve(a)
+      }
+      );
     })
   );
 
@@ -74,13 +78,13 @@ export const applyRulesForTab = (tab: ChromeTab, config: RulesConfig) => {
         tab,
         config,
         chromeTabsQueryPromise,
-        regroupTabsPromise(chromeTabsMovePromise),
-        groupChrome(),
+        moveTabsPromise(chromeTabsMovePromise),
+        groupChromeTabsPromise,
         ),
   ]).catch(err => console.log(err))
 }
 
-export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: number)=> Promise<ChromeTab[]>) : RegroupTabsPromise => (tabs: ChromeTab[]) => {
+export const moveTabsPromise = (chromeTabsMovePromise: (tabId: number, windowId: number, index: number)=> Promise<ChromeTab[]>) : MoveTabsPromise => (tabs: ChromeTab[]) => {
   
   if(tabs.length < 2) {
     console.log("no need to move", tabs.length, "tabs")
@@ -88,17 +92,30 @@ export const regroupTabsPromise = (chromeTabsMovePromise: (id: number, index: nu
   }
 
   console.log("move tabs...", tabs)
-  const firstIndex = tabs[0].index;
+  
+  // Find the reference window (the one where there are the most open tabs)
+  const windowCounts = tabs
+    .map(t => t.windowId)
+    .reduce((acc, val) => {
+      acc.set(val, (acc.get(val) || 0) + 1)
+      return acc
+    }, new Map<number, number>())
+    
+  const referenceWindowId = [...windowCounts.entries()].sort((a, b) => b[1] - a[1])[0][0]
+  console.log("Reference window id is", referenceWindowId)
+  
+  // Find the first tab index in the reference window
+  const referenceTab = tabs
+    .filter(t => t.windowId == referenceWindowId)
+    .sort((a, b) => a.index - b.index)[0]
+
   const movePromises = tabs
     .filter(t => t.id !== undefined)
-    .map(((t, index) => () => chromeTabsMovePromise(t.id!, firstIndex + index)))
+    // sort the tabs so that those in the reference window are first
+    .sort((a, b) => a.windowId == b.windowId ? a.index - b.index : a.windowId == referenceWindowId ? -1 : 1)
+    .map(((t, index) => () => chromeTabsMovePromise(t.id!, referenceTab.windowId, referenceTab.index + index)))
   return promiseSerial(movePromises)
     .then( () => Promise.resolve(tabs))
-}
-
-const groupChrome = (): GroupChromeTab =>
-(tabs: ChromeTab[]) => {
-  return groupChromeTabsPromise(tabs)
 }
 
 const getQueryToGroup = (url: URL, config: RulesConfig) => {
@@ -115,7 +132,7 @@ export const moveSameUrlHost = (
   tab: ChromeTab,
   config: RulesConfig,
   queryPromise: QueryPromise,
-  regroupTabsPromise: RegroupTabsPromise,
+  regroupTabsPromise: MoveTabsPromise,
   groupChromeTabsPromise: GroupChromeTab,
 ) => (
   new Promise(function(resolve, reject) {
@@ -128,7 +145,8 @@ export const moveSameUrlHost = (
 
     const hostQuery = getQueryToGroup(new URL(tab.url), config);
     queryPromise(hostQuery)
-    .then(regroupTabsPromise)
+    .then( tabs => regroupTabsPromise(tabs)) // can we skip this step if we group the tabs right after?
+    .then( () => queryPromise(hostQuery) ) // query again to get fresh tab infos (window can have changed after move)
     .then( tabs => groupChromeTabsPromise(tabs))
     .then( () => resolve([]))
   })
@@ -157,6 +175,9 @@ export const groupChromeTabsPromise = (tabs: ChromeTab[]) => {
   return chromeTabsGroupPromise({
     tabIds: tabIds,
     groupId: groupIdToUse,
+    createProperties: groupIdToUse === undefined ? {
+      windowId: tabs[0].windowId
+    } : undefined
   })
 }
 

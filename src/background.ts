@@ -33,7 +33,9 @@ chrome.runtime.onMessage.addListener(function(message, _, sendResponse) {
   }});
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  console.log("TabChangeInfo", changeInfo)
   if(changeInfo.url) {  
+    console.log("Url has changed, let's Otto rule!")
     applyRulesForTab(tab, config)
   }
 });
