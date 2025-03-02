@@ -17,12 +17,12 @@
     "test": "Runs all tests located in the test/ folder"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.6",
+    "@types/chai": "^5.0.1",
     "@types/chai-spies": "^1.0.6",
     "@types/filesystem": "^0.0.36",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.5",
-    "chai": "^4.2.0",
+    "chai": "^5.2.0",
     "chai-spies": "^1.1.0",
     "mocha": "^11.1.0",
     "prettier": "3.5.2",
