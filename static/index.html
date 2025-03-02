@@ -1,32 +1,41 @@
 <html>
-    <body style="background-color: white;">
-      <h1>Otto Tabs</h1>
+  <body style="background-color: white">
+    <h1>Otto Tabs</h1>
 
-      <div style="width:400px">
-
-        <div>
-          <input type="checkbox" id="duplicates" name="duplicates" value="duplicates" checked/>
-          <label for="duplicates">__MSG_popup_options_duplicates_description__</label>
-        </div>
-
-        <div>
-          <input type="checkbox" id="group" name="group" value="group" checked />
-          <label for="group">__MSG_popup_options_group_description__</label>
-          <select id="group_domain">
-            <option value="full_domain">__MSG_popup_options_group_option_host__</option>
-            <option value="sub_domain">__MSG_popup_options_group_option_subdomain__</option>
-          </select>
-        </div>
-
-        <div>
-            <input type="checkbox" id="host" name="host" value="host" checked />
-            <label for="host">__MSG_popup_options_openlimit_description__</label>
-          </div>
-
+    <div style="width: 400px">
+      <div>
+        <input
+          type="checkbox"
+          id="duplicates"
+          name="duplicates"
+          value="duplicates"
+          checked
+        />
+        <label for="duplicates"
+          >__MSG_popup_options_duplicates_description__</label
+        >
       </div>
 
-      <script type='module' src='./popup.js'></script>
-      <script src='./localise.js'></script>
+      <div>
+        <input type="checkbox" id="group" name="group" value="group" checked />
+        <label for="group">__MSG_popup_options_group_description__</label>
+        <select id="group_domain">
+          <option value="full_domain">
+            __MSG_popup_options_group_option_host__
+          </option>
+          <option value="sub_domain">
+            __MSG_popup_options_group_option_subdomain__
+          </option>
+        </select>
+      </div>
 
-    </body>
-  </html>
+      <div>
+        <input type="checkbox" id="host" name="host" value="host" checked />
+        <label for="host">__MSG_popup_options_openlimit_description__</label>
+      </div>
+    </div>
+
+    <script type="module" src="./popup.js"></script>
+    <script src="./localise.js"></script>
+  </body>
+</html>
